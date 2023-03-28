@@ -58,7 +58,9 @@
     "Classic": ["stripe", "feather", "leaf", "stripe", "fern"],
     "Sokoke": ["stripe", "feather", "leaf", "stripe", "fern"],
     "Agouti": ["back", "pelt", "fur"],
-    "Singlestripe": ["stripe", "streak", "back", "shade", "stem", "shadow"]
+    "Singlestripe": ["stripe", "streak", "spots", "shade", "stem", "shadow"],
+    "Moro": ["dapple", "streak", "patch", "shade", "spots", "shadow", "splash"],
+    "MoroTabby": ["stripe", "streak", "blotch", "shade", "patch", "shadow"]
   },
   "tortie_pelt_suffixes": {
     "solid": ["dapple", "speckle", "spots", "splash"],

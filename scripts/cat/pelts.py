@@ -220,6 +220,38 @@ class Singlestripe():
             return f"{self.colour} singlestripe{self.length}"
 
 
+class Moro():
+    name = "Moro"
+    sprites = {1: 'moro', 2: 'white'}
+
+    def __init__(self, colour, white, length):
+        self.white = white  # boolean; does cat have white on it or no
+        self.colour = colour
+        self.length = length
+
+    def __repr__(self):
+        if self.white:
+            return f"white and {self.colour} moro{self.length}"
+        else:
+            return f"{self.colour} moro{self.length}"
+
+
+class MoroTabby():
+    name = "MoroTabby"
+    sprites = {1: 'morotabby', 2: 'white'}
+
+    def __init__(self, colour, white, length):
+        self.white = white  # boolean; does cat have white on it or no
+        self.colour = colour
+        self.length = length
+
+    def __repr__(self):
+        if self.white:
+            return f"white and {self.colour} morotabby{self.length}"
+        else:
+            return f"{self.colour} morotabby{self.length}"
+
+
 class Tortie():
     name = "Tortie"
     sprites = {1: 'tortie', 2: 'white'}
@@ -463,6 +495,22 @@ def choose_pelt(colour=None, white=None, pelt=None, length=None, category=None, 
             return Singlestripe(choice(pelt_colours), white, length)
         else:
             return Singlestripe(colour, white, length)
+    elif pelt == 'Moro':
+        if colour is None and white is None:
+            return Moro(choice(pelt_colours), choice([False, True]),
+                                length)
+        elif colour is None:
+            return Moro(choice(pelt_colours), white, length)
+        else:
+            return Moro(colour, white, length)
+    elif pelt == 'MoroTabby':
+        if colour is None and white is None:
+            return MoroTabby(choice(pelt_colours), choice([False, True]),
+                                length)
+        elif colour is None:
+            return MoroTabby(choice(pelt_colours), white, length)
+        else:
+            return MoroTabby(colour, white, length)    
     elif pelt == 'Tortie':
         if white is None:
             return Tortie(colour, choice([False, True]), length)
@@ -569,7 +617,7 @@ def describe_appearance(cat, short=False):
 
     # Now it's time for gender
     if cat.genderalign in ["female", "trans female"]:
-        color_name = f"{color_name} she-cat"
+        color_name = f"{color_name} molly"
     elif cat.genderalign in ["male", "trans male"]:
         color_name = f"{color_name} tom"
     else:
