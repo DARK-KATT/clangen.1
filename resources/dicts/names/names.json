@@ -60,7 +60,8 @@
     "Agouti": ["back", "pelt", "fur"],
     "Singlestripe": ["stripe", "streak", "spots", "shade", "stem", "shadow"],
     "Moro": ["dapple", "streak", "patch", "shade", "spots", "shadow", "splash"],
-    "MoroTabby": ["stripe", "streak", "blotch", "shade", "patch", "shadow"]
+    "Pointed": ["fade", "light", "face", "shade", "tail", "shadow"],
+    "Lynx": ["spots", "speckle", "speck", "shade", "freckle", "shadow"]
   },
   "tortie_pelt_suffixes": {
     "solid": ["dapple", "speckle", "spots", "splash"],
@@ -74,7 +75,8 @@
     "mackerel": ["stripe", "feather", "fern", "shade"],
     "classic": ["stripe", "feather", "fern"],
     "sokoke": ["stripe", "feather", "fern", "shade", "dapple"],
-    "agouti": ["back", "pelt", "fur", "dapple", "splash"]
+    "agouti": ["back", "pelt", "fur", "dapple", "splash"],
+    "lynx": ["speckle", "freckle", "dapple", "rain"]
   },
 
   "normal_prefixes": [

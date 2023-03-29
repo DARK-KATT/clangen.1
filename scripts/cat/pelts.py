@@ -236,9 +236,9 @@ class Moro():
             return f"{self.colour} moro{self.length}"
 
 
-class MoroTabby():
-    name = "MoroTabby"
-    sprites = {1: 'morotabby', 2: 'white'}
+class Lynx():
+    name = "Lynx"
+    sprites = {1: 'lynx', 2: 'white'}
 
     def __init__(self, colour, white, length):
         self.white = white  # boolean; does cat have white on it or no
@@ -247,9 +247,25 @@ class MoroTabby():
 
     def __repr__(self):
         if self.white:
-            return f"white and {self.colour} morotabby{self.length}"
+            return f"white and {self.colour} lynx{self.length}"
         else:
-            return f"{self.colour} morotabby{self.length}"
+            return f"{self.colour} lynx{self.length}"
+
+
+class Pointpelt():
+    name = "Pointed"
+    sprites = {1: 'pointpelt', 2: 'white'}
+
+    def __init__(self, colour, white, length):
+        self.white = white  # boolean; does cat have white on it or no
+        self.colour = colour
+        self.length = length
+
+    def __repr__(self):
+        if self.white:
+            return f"white and {self.colour} pointpelt{self.length}"
+        else:
+            return f"{self.colour} pointpelt{self.length}"
 
 
 class Tortie():
@@ -300,7 +316,7 @@ tortiepatterns = ['ONE', 'TWO', 'THREE', 'FOUR', 'REDTAIL', 'DELILAH', 'MINIMALO
                   'OREO', 'SWOOP', 'MOTTLED', 'SIDEMASK', 'EYEDOT', 'BANDANA', 'PACMAN', 'STREAMSTRIKE', 'ORIOLE',
                   'ROBIN', 'BRINDLE', 'PAIGE']
 tortiebases = ['single', 'tabby', 'bengal', 'marbled', 'ticked', 'smoke', 'rosette', 'speckled', 'mackerel',
-               'classic', 'sokoke', 'agouti', 'singlestripe']
+               'classic', 'sokoke', 'agouti', 'singlestripe', 'lynx', 'pointpelt']
 
 pelt_length = ["short", "medium", "long"]
 eye_colours = ['YELLOW', 'AMBER', 'HAZEL', 'PALEGREEN', 'GREEN', 'BLUE', 'DARKBLUE', 'GREY', 'CYAN', 'EMERALD', 'PALEBLUE', 
@@ -338,9 +354,9 @@ collars = [
 ]
 
 tabbies = ["Tabby", "Ticked", "Mackerel", "Classic", "Sokoke", "Agouti"]
-spotted = ["Speckled", "Rosette"]
-plain = ["SingleColour", "TwoColour", "Smoke", "Singlestripe"]
-exotic = ["Bengal", "Marbled", "Moro", "MoroTabby"]
+spotted = ["Speckled", "Rosette", "Lynx"]
+plain = ["SingleColour", "TwoColour", "Smoke", "Singlestripe", "Pointed"]
+exotic = ["Bengal", "Marbled"]
 torties = ["Tortie", "Calico"]
 pelt_categories = [tabbies, spotted, plain, exotic, torties]
 
@@ -503,14 +519,14 @@ def choose_pelt(colour=None, white=None, pelt=None, length=None, category=None, 
             return Moro(choice(pelt_colours), white, length)
         else:
             return Moro(colour, white, length)
-    elif pelt == 'MoroTabby':
+    elif pelt == 'Lynx':
         if colour is None and white is None:
-            return MoroTabby(choice(pelt_colours), choice([False, True]),
+            return Lynx(choice(pelt_colours), choice([False, True]),
                                 length)
         elif colour is None:
-            return MoroTabby(choice(pelt_colours), white, length)
+            return Lynx(choice(pelt_colours), white, length)
         else:
-            return MoroTabby(colour, white, length)    
+            return Lynx(colour, white, length)    
     elif pelt == 'Tortie':
         if white is None:
             return Tortie(colour, choice([False, True]), length)
@@ -557,7 +573,7 @@ def describe_appearance(cat, short=False):
         "Rosette": "unusually spotted c_n",
         "Sokoke": "c_n tabby",
         "Moro": "unusually blotched c_n",
-        "MoroTabby": "unusually blotched c_n tabby"
+        "Lynx": "unusually speckled c_n"
     }
 
     # Start with determining the base color name. 
