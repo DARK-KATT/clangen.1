@@ -252,6 +252,118 @@ class Lynx():
             return f"{self.colour} lynx{self.length}"
 
 
+class Mosaic():
+    name = "Mosaic"
+    sprites = {1: 'Mosaic', 2: 'white'}
+
+    def __init__(self, colour, white, length):
+        self.white = white  # boolean; does cat have white on it or no
+        self.colour = colour
+        self.length = length
+
+    def __repr__(self):
+        if self.white:
+            return f"white and {self.colour} mosaic{self.length}"
+        else:
+            return f"{self.colour} mosaic{self.length}"
+
+
+class PseudoTabby():
+    name = "PseudoTabby"
+    sprites = {1: 'pseudotabby', 2: 'white'}
+
+    def __init__(self, colour, white, length):
+        self.white = white  # boolean; does cat have white on it or no
+        self.colour = colour
+        self.length = length
+
+    def __repr__(self):
+        if self.white:
+            return f"white and {self.colour} pseudotabby{self.length}"
+        else:
+            return f"{self.colour} pseudotabby{self.length}"
+
+
+class Abyssinian():
+    name = "Abyssinian"
+    sprites = {1: 'abyssinian', 2: 'white'}
+
+    def __init__(self, colour, white, length):
+        self.white = white  # boolean; does cat have white on it or no
+        self.colour = colour
+        self.length = length
+
+    def __repr__(self):
+        if self.white:
+            return f"white and {self.colour} abyssinian{self.length}"
+        else:
+            return f"{self.colour} abyssinian{self.length}"
+
+
+class Clouded():
+    name = "Clouded"
+    sprites = {1: 'clouded', 2: 'white'}
+
+    def __init__(self, colour, white, length):
+        self.white = white  # boolean; does cat have white on it or no
+        self.colour = colour
+        self.length = length
+
+    def __repr__(self):
+        if self.white:
+            return f"white and {self.colour} clouded{self.length}"
+        else:
+            return f"{self.colour} clouded{self.length}"
+
+
+class Doberman():
+    name = "Doberman"
+    sprites = {1: 'doberman', 2: 'white'}
+
+    def __init__(self, colour, white, length):
+        self.white = white  # boolean; does cat have white on it or no
+        self.colour = colour
+        self.length = length
+
+    def __repr__(self):
+        if self.white:
+            return f"white and {self.colour} doberman{self.length}"
+        else:
+            return f"{self.colour} doberman{self.length}"
+
+
+class Merle():
+    name = "Merle"
+    sprites = {1: 'merle', 2: 'white'}
+
+    def __init__(self, colour, white, length):
+        self.white = white  # boolean; does cat have white on it or no
+        self.colour = colour
+        self.length = length
+
+    def __repr__(self):
+        if self.white:
+            return f"white and {self.colour} merle{self.length}"
+        else:
+            return f"{self.colour} merle{self.length}"
+
+
+class Monarch():
+    name = "Monarch"
+    sprites = {1: 'monarch', 2: 'white'}
+
+    def __init__(self, colour, white, length):
+        self.white = white  # boolean; does cat have white on it or no
+        self.colour = colour
+        self.length = length
+
+    def __repr__(self):
+        if self.white:
+            return f"white and {self.colour} monarch{self.length}"
+        else:
+            return f"{self.colour} monarch{self.length}"
+
+
 class Tortie():
     name = "Tortie"
     sprites = {1: 'tortie', 2: 'white'}
@@ -300,7 +412,8 @@ tortiepatterns = ['ONE', 'TWO', 'THREE', 'FOUR', 'REDTAIL', 'DELILAH', 'MINIMALO
                   'OREO', 'SWOOP', 'MOTTLED', 'SIDEMASK', 'EYEDOT', 'BANDANA', 'PACMAN', 'STREAMSTRIKE', 'ORIOLE',
                   'ROBIN', 'BRINDLE', 'PAIGE']
 tortiebases = ['single', 'tabby', 'bengal', 'marbled', 'ticked', 'smoke', 'rosette', 'speckled', 'mackerel',
-               'classic', 'sokoke', 'agouti', 'singlestripe', 'lynx']
+               'classic', 'sokoke', 'agouti', 'singlestripe', 'lynx', 'doberman', 'merle', 'clouded', 'monarch', 'pseudotabby',
+               'abyssinian']
 
 pelt_length = ["short", "medium", "long"]
 eye_colours = ['YELLOW', 'AMBER', 'HAZEL', 'PALEGREEN', 'GREEN', 'BLUE', 'DARKBLUE', 'GREY', 'CYAN', 'EMERALD', 'PALEBLUE', 
@@ -337,10 +450,11 @@ collars = [
     "BLACKNYLON", "SPIKESNYLON", "WHITENYLON", "PINKNYLON", "PURPLENYLON", "MULTINYLON", "INDIGONYLON",
 ]
 
-tabbies = ["Tabby", "Ticked", "Mackerel", "Classic", "Sokoke", "Agouti"]
+tabbies = ["Tabby", "Ticked", "Mackerel", "Classic", "Sokoke", "Agouti", "Merle"]
 spotted = ["Speckled", "Rosette", "Lynx"]
-plain = ["SingleColour", "TwoColour", "Smoke", "Singlestripe"]
-exotic = ["Bengal", "Marbled"]
+plain = ["SingleColour", "TwoColour", "Smoke", "Singlestripe", "PseudoTabby"]
+patterned = ["Moro","Mosaic", "Abyssinian", "Doberman"],
+exotic = ["Bengal", "Marbled", "Monarch", "Clouded"]
 torties = ["Tortie", "Calico"]
 pelt_categories = [tabbies, spotted, plain, exotic, torties]
 
@@ -510,7 +624,64 @@ def choose_pelt(colour=None, white=None, pelt=None, length=None, category=None, 
         elif colour is None:
             return Lynx(choice(pelt_colours), white, length)
         else:
-            return Lynx(colour, white, length)    
+            return Lynx(colour, white, length)
+    elif pelt == 'Mosaic':
+        if colour is None and white is None:
+            return Mosaic(choice(pelt_colours), choice([False, True]),
+                                length)
+        elif colour is None:
+            return Mosaic(choice(pelt_colours), white, length)
+        else:
+            return Mosaic(colour, white, length)    
+    elif pelt == 'PseudoTabby':
+        if colour is None and white is None:
+            return PseudoTabby(choice(pelt_colours), choice([False, True]),
+                                length)
+        elif colour is None:
+            return PseudoTabby(choice(pelt_colours), white, length)
+        else:
+            return PseudoTabby(colour, white, length)    
+    elif pelt == 'Abyssinian':
+        if colour is None and white is None:
+            return Abyssinian(choice(pelt_colours), choice([False, True]),
+                                length)
+        elif colour is None:
+            return Abyssinian(choice(pelt_colours), white, length)
+        else:
+            return Abyssinian(colour, white, length)  
+    elif pelt == 'Clouded':
+        if colour is None and white is None:
+            return Clouded(choice(pelt_colours), choice([False, True]),
+                                length)
+        elif colour is None:
+            return Clouded(choice(pelt_colours), white, length)
+        else:
+            return Clouded(colour, white, length)             
+    elif pelt == 'Doberman':
+        if colour is None and white is None:
+            return Doberman(choice(pelt_colours), choice([False, True]),
+                                length)
+        elif colour is None:
+            return Doberman(choice(pelt_colours), white, length)
+        else:
+            return Doberman(colour, white, length)       
+    elif pelt == 'Merle':
+        if colour is None and white is None:
+            return Merle(choice(pelt_colours), choice([False, True]),
+                                length)
+        elif colour is None:
+            return Merle(choice(pelt_colours), white, length)
+        else:
+            return Merle(colour, white, length)    
+    elif pelt == 'Monarch':
+        if colour is None and white is None:
+            return Monarch(choice(pelt_colours), choice([False, True]),
+                                length)
+        elif colour is None:
+            return Monarch(choice(pelt_colours), white, length)
+        else:
+            return Monarch(colour, white, length)    
+
     elif pelt == 'Tortie':
         if white is None:
             return Tortie(colour, choice([False, True]), length)
@@ -557,7 +728,14 @@ def describe_appearance(cat, short=False):
         "Rosette": "unusually spotted c_n",
         "Sokoke": "c_n tabby",
         "Moro": "unusually blotched c_n",
-        "Lynx": "unusually speckled c_n"
+        "Lynx": "unusually speckled c_n",
+        "Mosaic": "c_n patched",
+        "PseudoTabby": "c_n tabby",
+        "Abyssinian": "unusually patterned",
+        "Clouded": "streaked c_n tabby",
+        "Doberman": "unually patterned",
+        "Merle": "unusually streaked c_n tabby",
+        "Monarch": "unusually spotted c_n"
     }
 
     # Start with determining the base color name. 

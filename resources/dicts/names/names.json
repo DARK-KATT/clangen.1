@@ -60,7 +60,15 @@
     "Agouti": ["back", "pelt", "fur"],
     "Singlestripe": ["stripe", "streak", "spots", "shade", "stem", "shadow"],
     "Moro": ["dapple", "streak", "patch", "shade", "spots", "shadow", "splash"],
-    "Lynx": ["spots", "speckle", "speck", "shade", "freckle", "shadow"]
+    "Lynx": ["spots", "speckle", "speck", "shade", "freckle", "shadow"],
+    "Mosaic": ["spots", "speckle", "speck", "shade", "freckle", "shadow"],
+    "PseudoTabby": ["streak", "stripes", "leaf", "shade", "fern"],
+    "Abyssinian": ["spots", "speckle", "speck", "shade", "freckle", "shadow"],
+    "Clouded": ["streak", "stripes", "leaf", "shade", "fern"],
+    "Doberman": ["spots", "face", "foot", "howl"],
+    "Merle": ["streak", "shade", "wave", "stripes"],
+    "Monarch": ["spots", "blotch", "speck"]
+    
   },
   "tortie_pelt_suffixes": {
     "solid": ["dapple", "speckle", "spots", "splash"],
@@ -75,7 +83,13 @@
     "classic": ["stripe", "feather", "fern"],
     "sokoke": ["stripe", "feather", "fern", "shade", "dapple"],
     "agouti": ["back", "pelt", "fur", "dapple", "splash"],
-    "lynx": ["speckle", "freckle", "dapple", "rain"]
+    "lynx": ["speckle", "freckle", "dapple", "rain"],
+    "PseudoTabby": ["streak", "stripes", "leaf", "shade", "fern"],
+    "Abyssinian": ["spots", "speckle", "speck", "shade", "freckle", "shadow"],
+    "Clouded": ["streak", "stripes", "leaf", "shade", "fern"],
+    "Doberman": ["spots", "face", "foot", "howl"],
+    "Merle": ["streak", "shade", "wave", "stripes"],
+    "Monarch": ["spots", "blotch", "dapple"]
   },
 
   "normal_prefixes": [
