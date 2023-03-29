@@ -340,7 +340,7 @@ collars = [
 tabbies = ["Tabby", "Ticked", "Mackerel", "Classic", "Sokoke", "Agouti"]
 spotted = ["Speckled", "Rosette"]
 plain = ["SingleColour", "TwoColour", "Smoke", "Singlestripe"]
-exotic = ["Bengal", "Marbled"]
+exotic = ["Bengal", "Marbled", "Moro", "MoroTabby"]
 torties = ["Tortie", "Calico"]
 pelt_categories = [tabbies, spotted, plain, exotic, torties]
 
@@ -555,7 +555,9 @@ def describe_appearance(cat, short=False):
         "Agouti": "c_n tabby",
         "Singlestripe": "dorsal-striped c_n",
         "Rosette": "unusually spotted c_n",
-        "Sokoke": "c_n tabby"
+        "Sokoke": "c_n tabby",
+        "Moro": "unusually blotched c_n",
+        "MoroTabby": "unusually blotched c_n tabby"
     }
 
     # Start with determining the base color name. 
