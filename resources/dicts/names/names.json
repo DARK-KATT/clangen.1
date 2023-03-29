@@ -60,7 +60,6 @@
     "Agouti": ["back", "pelt", "fur"],
     "Singlestripe": ["stripe", "streak", "spots", "shade", "stem", "shadow"],
     "Moro": ["dapple", "streak", "patch", "shade", "spots", "shadow", "splash"],
-    "Pointed": ["fade", "light", "face", "shade", "tail", "shadow"],
     "Lynx": ["spots", "speckle", "speck", "shade", "freckle", "shadow"]
   },
   "tortie_pelt_suffixes": {

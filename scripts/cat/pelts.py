@@ -252,22 +252,6 @@ class Lynx():
             return f"{self.colour} lynx{self.length}"
 
 
-class Pointpelt():
-    name = "Pointed"
-    sprites = {1: 'pointpelt', 2: 'white'}
-
-    def __init__(self, colour, white, length):
-        self.white = white  # boolean; does cat have white on it or no
-        self.colour = colour
-        self.length = length
-
-    def __repr__(self):
-        if self.white:
-            return f"white and {self.colour} pointpelt{self.length}"
-        else:
-            return f"{self.colour} pointpelt{self.length}"
-
-
 class Tortie():
     name = "Tortie"
     sprites = {1: 'tortie', 2: 'white'}
@@ -316,7 +300,7 @@ tortiepatterns = ['ONE', 'TWO', 'THREE', 'FOUR', 'REDTAIL', 'DELILAH', 'MINIMALO
                   'OREO', 'SWOOP', 'MOTTLED', 'SIDEMASK', 'EYEDOT', 'BANDANA', 'PACMAN', 'STREAMSTRIKE', 'ORIOLE',
                   'ROBIN', 'BRINDLE', 'PAIGE']
 tortiebases = ['single', 'tabby', 'bengal', 'marbled', 'ticked', 'smoke', 'rosette', 'speckled', 'mackerel',
-               'classic', 'sokoke', 'agouti', 'singlestripe', 'lynx', 'pointpelt']
+               'classic', 'sokoke', 'agouti', 'singlestripe', 'lynx']
 
 pelt_length = ["short", "medium", "long"]
 eye_colours = ['YELLOW', 'AMBER', 'HAZEL', 'PALEGREEN', 'GREEN', 'BLUE', 'DARKBLUE', 'GREY', 'CYAN', 'EMERALD', 'PALEBLUE', 
@@ -355,7 +339,7 @@ collars = [
 
 tabbies = ["Tabby", "Ticked", "Mackerel", "Classic", "Sokoke", "Agouti"]
 spotted = ["Speckled", "Rosette", "Lynx"]
-plain = ["SingleColour", "TwoColour", "Smoke", "Singlestripe", "Pointed"]
+plain = ["SingleColour", "TwoColour", "Smoke", "Singlestripe"]
 exotic = ["Bengal", "Marbled"]
 torties = ["Tortie", "Calico"]
 pelt_categories = [tabbies, spotted, plain, exotic, torties]

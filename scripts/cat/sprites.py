@@ -184,7 +184,7 @@ sprites = Sprites(50)
 #tiles = Sprites(64)
 
 for x in [
-    'lineart', 'singlecolours', 'speckledcolours', 'tabbycolours', 'morocolours', 'pointpeltcolours',
+    'lineart', 'singlecolours', 'speckledcolours', 'tabbycolours', 'morocolours',
     'whitepatches', 'eyes', 'eyes2', 'skin', 'scars', 'missingscars', 'lynxcolours',
     'collars', 'bellcollars', 'bowcollars', 'nyloncollars',
     'bengalcolours', 'marbledcolours', 'rosettecolours', 'smokecolours', 'tickedcolours', 
@@ -342,13 +342,6 @@ for a, i in enumerate(['PALEGINGER', 'GOLDEN', 'GINGER', 'DARKGINGER', 'CREAM'])
     sprites.make_group('morocolours', (a, 1), f'moro{i}')
 for a, i in enumerate(['LIGHTBROWN', 'BROWN', 'DARKBROWN', 'BLACK']):
     sprites.make_group('morocolours', (a, 2), f'moro{i}')
-# pointpelt
-for a, i in enumerate(['WHITE', 'PALEGREY', 'SILVER', 'GREY', 'DARKGREY', 'GHOST']):
-    sprites.make_group('pointpeltcolours', (a, 0), f'pointpelt{i}')
-for a, i in enumerate(['PALEGINGER', 'GOLDEN', 'GINGER', 'DARKGINGER', 'CREAM']):
-    sprites.make_group('pointpeltcolours', (a, 1), f'pointpelt{i}')
-for a, i in enumerate(['LIGHTBROWN', 'BROWN', 'DARKBROWN', 'BLACK']):
-    sprites.make_group('pointpeltcolours', (a, 2), f'pointpelt{i}')
 # lynx
 for a, i in enumerate(['WHITE', 'PALEGREY', 'SILVER', 'GREY', 'DARKGREY', 'GHOST']):
     sprites.make_group('lynxcolours', (a, 0), f'lynx{i}')
