@@ -185,9 +185,9 @@ sprites = Sprites(50)
 
 for x in [
     'lineart', 'singlecolours', 'speckledcolours', 'tabbycolours', 'morocolours', 'pseudotabbycolours',
-    'whitepatches', 'eyes', 'eyes2', 'skin', 'scars', 'missingscars', 'lynxcolours', 'monarchcolours'
+    'whitepatches', 'eyes', 'eyes2', 'skin', 'scars', 'missingscars', 'lynxcolours', 'monarchcolours',
     'collars', 'bellcollars', 'bowcollars', 'nyloncollars', 'cloudedcolours', 'mosaiccolours',
-    'bengalcolours', 'marbledcolours', 'rosettecolours', 'smokecolours', 'tickedcolours', 'merlecolours'
+    'bengalcolours', 'marbledcolours', 'rosettecolours', 'smokecolours', 'tickedcolours', 'merlecolours',
     'mackerelcolours', 'classiccolours', 'sokokecolours', 'agouticolours', 'singlestripecolours', 
     'shadersnewwhite', 'lineartdead', 'tortiepatchesmasks', 'abyssiniancolours', 'dobermancolours',
     'medcatherbs', 'lineartdf', 'lightingnew', 'fademask',
