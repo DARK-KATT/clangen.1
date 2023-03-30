@@ -358,7 +358,7 @@ for a, i in enumerate(['LIGHTBROWN', 'BROWN', 'DARKBROWN', 'BLACK']):
     sprites.make_group('mosaiccolours', (a, 2), f'mosiac{i}')
 # pseudotabby
 for a, i in enumerate(['WHITE', 'PALEGREY', 'SILVER', 'GREY', 'DARKGREY', 'GHOST']):
-    sprites.make_group('pseudotabbycolours', (a, 0), f'pseudotabbyu{i}')
+    sprites.make_group('pseudotabbycolours', (a, 0), f'pseudotabby{i}')
 for a, i in enumerate(['PALEGINGER', 'GOLDEN', 'GINGER', 'DARKGINGER', 'CREAM']):
     sprites.make_group('pseudotabbycolours', (a, 1), f'pseudotabby{i}')
 for a, i in enumerate(['LIGHTBROWN', 'BROWN', 'DARKBROWN', 'BLACK']):
