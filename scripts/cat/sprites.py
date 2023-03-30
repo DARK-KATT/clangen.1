@@ -395,9 +395,9 @@ for a, i in enumerate(['LIGHTBROWN', 'BROWN', 'DARKBROWN', 'BLACK']):
 for a, i in enumerate(['WHITE', 'PALEGREY', 'SILVER', 'GREY', 'DARKGREY', 'GHOST']):
     sprites.make_group('monarchcolours', (a, 0), f'monarch{i}')
 for a, i in enumerate(['PALEGINGER', 'GOLDEN', 'GINGER', 'DARKGINGER', 'CREAM']):
-    sprites.make_group('monarcholours', (a, 1), f'monarch{i}')
+    sprites.make_group('monarchcolours', (a, 1), f'monarch{i}')
 for a, i in enumerate(['LIGHTBROWN', 'BROWN', 'DARKBROWN', 'BLACK']):
-    sprites.make_group('monarchlours', (a, 2), f'monarch{i}')
+    sprites.make_group('monarchcolours', (a, 2), f'monarch{i}')
 
 # new new torties
 for a, i in enumerate(['ONE', 'TWO', 'THREE', 'FOUR', 'REDTAIL', 'DELILAH']):

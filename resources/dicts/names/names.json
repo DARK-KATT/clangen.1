@@ -84,12 +84,12 @@
     "sokoke": ["stripe", "feather", "fern", "shade", "dapple"],
     "agouti": ["back", "pelt", "fur", "dapple", "splash"],
     "lynx": ["speckle", "freckle", "dapple", "rain"],
-    "PseudoTabby": ["streak", "stripes", "leaf", "shade", "fern"],
-    "Abyssinian": ["spots", "speckle", "speck", "shade", "freckle", "shadow"],
-    "Clouded": ["streak", "stripes", "leaf", "shade", "fern"],
-    "Doberman": ["spots", "face", "foot", "howl"],
-    "Merle": ["streak", "shade", "wave", "stripes"],
-    "Monarch": ["spots", "blotch", "dapple"]
+    "pseudotabby": ["streak", "stripes", "leaf", "shade", "fern"],
+    "abyssinian": ["spots", "speckle", "speck", "shade", "freckle", "shadow"],
+    "clouded": ["streak", "stripes", "leaf", "shade", "fern"],
+    "doberman": ["spots", "face", "foot", "howl"],
+    "merle": ["streak", "shade", "wave", "stripes"],
+    "monarch": ["spots", "blotch", "dapple"]
   },
 
   "normal_prefixes": [
