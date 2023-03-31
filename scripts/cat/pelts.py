@@ -254,7 +254,7 @@ class Lynx():
 
 class Mosaic():
     name = "Mosaic"
-    sprites = {1: 'Mosaic', 2: 'white'}
+    sprites = {1: 'mosaic', 2: 'white'}
 
     def __init__(self, colour, white, length):
         self.white = white  # boolean; does cat have white on it or no
