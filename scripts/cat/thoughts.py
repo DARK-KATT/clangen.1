@@ -1,10 +1,8 @@
 import os
+import traceback
 from random import choice
 
-try:
-    import ujson
-except ImportError:
-    import json as ujson
+import ujson
 
 class Thoughts():
     @staticmethod
@@ -37,7 +35,7 @@ class Thoughts():
         if "mentor/app" in constraint and random_cat not in main_cat.apprentice:
             return False
         
-        if "app/mentor" in constraint and random_cat.ID == main_cat.mentor:
+        if "app/mentor" in constraint and str(random_cat.ID) != main_cat.mentor:
             return False
         
         if "strangers" in constraint and relationship and (relationship.platonic_like < 1 or relationship.romantic_love < 1):
@@ -66,24 +64,29 @@ class Thoughts():
             if camp not in thought["camp"]:
                 return False
 
+        # This is for checking if another cat is needed and there is a other cat
+        r_c_in = [thought_str for thought_str in thought["thoughts"] if "r_c" in thought_str]
+        if len(r_c_in) > 0 and not random_cat:
+            return False
+
         # This is for filtering certain relationship types between the main cat and random cat. 
-        if "relationship_constraint" in thought:
+        if "relationship_constraint" in thought and random_cat:
             if not Thoughts.thought_fulfill_rel_constraints(main_cat, random_cat, thought["relationship_constraint"]):
                 return False
 
-        # Contraints for the status of the main cat
+        # Constraints for the status of the main cat
         if 'main_status_constraint' in thought:
-            if ('main_status_constraint' in thought and main_cat.status not in thought['main_status_constraint']) or\
-                ('any' not in thought['main_status_constraint']):
+            if main_cat.status not in thought['main_status_constraint'] and 'any' not in thought['main_status_constraint']:
                 return False
-
-        # Contraints for the status of the random cat
+            
+        # Constraints for the status of the random cat
         if 'random_status_constraint' in thought and random_cat:
-            if (random_cat.status not in thought['random_status_constraint'])or\
-                ('any' not in thought['random_status_constraint']):
+            if random_cat.status not in thought['random_status_constraint'] and 'any' not in thought['random_status_constraint']:
                 return False
+        elif 'random_status_constraint' in thought and not random_cat:
+            pass
 
-        # main cat age contraint
+        # main cat age constraint
         if 'main_age_constraint' in thought:
             if main_cat.age not in thought['main_age_constraint']:
                 return False
@@ -103,6 +106,7 @@ class Thoughts():
         if 'main_skill_constraint' in thought:
             if main_cat.skill not in thought['main_skill_constraint']:
                 return False
+            
         if 'random_skill_constraint' in thought and random_cat:
             if random_cat.skill not in thought['random_skill_constraint']:
                 return False
@@ -117,7 +121,7 @@ class Thoughts():
         # is taken into account in the thought loading process.
         living_status = None
         outside_status = None
-        if 'random_living_status' in thought:
+        if random_cat and 'random_living_status' in thought:
             if random_cat and not random_cat.dead:
                 living_status = "living"
             elif random_cat and random_cat.dead and random_cat.df:
@@ -128,44 +132,55 @@ class Thoughts():
                 living_status = 'unknownresidence'
             if living_status and living_status not in thought['random_living_status']:
                 return False
-        
+
         # this covers if living status isn't stated
-        elif 'random_living_status' not in thought:
+        else:
             living_status = None
             if random_cat and not random_cat.dead and not random_cat.outside:
                 living_status = "living"
             if living_status and living_status != "living":
                 return False
-            
-        if 'random_outside_status' in thought:
+        
+        if random_cat and 'random_outside_status' in thought:
+            outside_status = None
             if random_cat and random_cat.outside and random_cat.status not in ["kittypet", "loner", "rogue", "former Clancat", "exiled"]:
                 outside_status = "lost"
             elif random_cat and random_cat.outside:
-                outside_status = "outside cat"
+                outside_status = "outside"
             else:
                 outside_status = "clancat"
-            if outside_status and outside_status not in thought['random_outside_status']:
+            if outside_status not in thought['random_outside_status']:
                 return False
+        else:
+            if random_cat and random_cat.outside and random_cat.status not in ["kittypet", "loner", "rogue", "former Clancat", "exiled"]:
+                outside_status = "lost"
+            elif random_cat and random_cat.outside:
+                outside_status = "outside"
+            else:
+                outside_status = "clancat"
+            if outside_status and outside_status != 'clancat' and len(r_c_in) > 0:
+                return False
+
         if game_mode != "classic" and 'has_injuries' in thought:
             if "m_c" in thought['has_injuries']:
                 if not ([i for i in main_cat.injuries if i in thought['has_injuries']["m_c"]] or [i for i in main_cat.illnesses if i in thought['has_injuries']["m_c"]]\
-                    or [(main_cat.injuries or main_cat.illnesses) and "any" in thought['has_injuries']["m_c"]]):
+                    or not [(main_cat.injuries or main_cat.illnesses) and "any" in thought['has_injuries']["m_c"]]):
                     return False
             if "r_c" in thought['has_injuries'] and random_cat:
                 if not ([i for i in random_cat.injuries if i in thought['has_injuries']["r_c"]] or [i for i in random_cat.illnesses if i in thought['has_injuries']["m_c"]]\
-                    or [(random_cat.injuries or random_cat.illnesses) and "any" in thought['has_injuries']["r_c"]]):
+                    or not [(random_cat.injuries or random_cat.illnesses) and "any" in thought['has_injuries']["r_c"]]):
                     return False
         
         if game_mode != "classic" and "perm_conditions" in thought:
             if "m_c" in thought["perm_conditions"]:
                 if not [i for i in main_cat.permanent_condition if i in thought["perm_conditions"]["m_c"]]\
-                    or [main_cat.permanent_condition and "any" in thought['perm_conditions']["m_c"]]:
+                    or not [main_cat.permanent_condition and "any" in thought['perm_conditions']["m_c"]]:
                     return False
             if "r_c" in thought["perm_conditions"] and random_cat:
                 if not [i for i in random_cat.permanent_condition if i in thought["perm_conditions"]["r_c"]]\
-                    or [random_cat.permanent_condition and "any" in thought['perm_conditions']["r_c"]]:
+                    or not [random_cat.permanent_condition and "any" in thought['perm_conditions']["r_c"]]:
                     return False
-
+        
         return True
     # ---------------------------------------------------------------------------- #
     #                            BUILD MASTER DICTIONARY                           #
@@ -215,8 +230,11 @@ class Thoughts():
         GENTHOUGHTS = []
         with open(f"{base_path}{life_dir}{spec_dir}/general.json", 'r') as read_file:
             GENTHOUGHTS = ujson.loads(read_file.read())
-        loaded_thoughts += THOUGHTS
-        loaded_thoughts += GENTHOUGHTS
+        # newborns only pull from their status thoughts. this is done for convenience
+        if main_cat.age == 'newborn':
+            loaded_thoughts = THOUGHTS
+        else:
+            loaded_thoughts = THOUGHTS + GENTHOUGHTS
         final_thoughts = Thoughts.create_thoughts(loaded_thoughts, main_cat, other_cat, game_mode, biome, season, camp)
 
         return final_thoughts
@@ -227,7 +245,8 @@ class Thoughts():
         try:
             chosen_thought_group = choice(Thoughts.load_thoughts(main_cat, other_cat, game_mode, biome, season, camp))
             chosen_thought = choice(chosen_thought_group["thoughts"])
-        except:
+        except Exception:
+            traceback.print_exc()
             chosen_thought = "No thoughts, head empty"
 
         return chosen_thought

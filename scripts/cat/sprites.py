@@ -1,10 +1,8 @@
 import pygame
 
-try:
-    import ujson
-except ImportError:
-    import json as ujson
+import ujson
 
+from scripts.game_structure.game_essentials import game
 
 class Sprites():
     cat_tints = {}
@@ -210,7 +208,10 @@ for x in [
     'fadestarclan', 'fadedarkforest'
 
 ]:
-    sprites.spritesheet(f"sprites/{x}.png", x)
+    if 'lineart' in x and game.config['fun']['april_fools']:
+        sprites.spritesheet(f"sprites/aprilfools{x}.png", x)
+    else:
+        sprites.spritesheet(f"sprites/{x}.png", x)
 
 # Line art
 sprites.make_group('lineart', (0, 0), 'lines')
