@@ -205,12 +205,18 @@ for x in [
     'mackerelcolours', 'classiccolours', 'sokokecolours', 'agouticolours', 'singlestripecolours', 
     'shadersnewwhite', 'lineartdead', 'tortiepatchesmasks', 
     'medcatherbs', 'lineartdf', 'lightingnew', 'fademask',
-    'fadestarclan', 'fadedarkforest'
+    'fadestarclan', 'fadedarkforest', 'meteor_showers/singlecolours', 'meteor_showers/speckledcolours',
+	'meteor_showers/tabbycolours', 'meteor_showers/bengalcolours', 'meteor_showers/marbledcolours',
+	'meteor_showers/rosettecolours', 'meteor_showers/smokecolours', 'meteor_showers/tickedcolours',
+	'meteor_showers/mackerelcolours', 'meteor_showers/classiccolours', 'meteor_showers/agouticolours',
+	'meteor_showers/singlestripecolours', 'meteor_showers/sokokecolours'
 
 ]:
     if 'lineart' in x and game.config['fun']['april_fools']:
         sprites.spritesheet(f"sprites/aprilfools{x}.png", x)
-    else:
+    elif 'unnatural_colors_mod' in x:
+    	sprites.spritesheet(f"sprites/{x}.png", x[21:] + "MS")
+else:
         sprites.spritesheet(f"sprites/{x}.png", x)
 
 # Line art
@@ -271,6 +277,12 @@ for a, i in enumerate(['CREAM', 'PALEGINGER', 'GOLDEN', 'GINGER', 'DARKGINGER', 
     sprites.make_group('singlecolours', (a, 1), f'single{i}')
 for a, i in enumerate(['LIGHTBROWN', 'LILAC', 'BROWN', 'GOLDEN-BROWN', 'DARKBROWN', 'CHOCOLATE']):
     sprites.make_group('singlecolours', (a, 2), f'single{i}')
+for a, i in enumerate(['MOONSTONE', 'LEONID', 'SKYWARD', 'SIDEREAL', 'DEMIURGE', 'DIVINE', 'INTERSTELLAR']):
+	sprites.make_group('singlecoloursMS', (a, 0), f'single{i}')
+for a, i in enumerate(['HEAVENLY', 'DAWN', 'HOWLITE', 'SUNRISE', 'ASTRAL', 'PRISMATIC']):
+	sprites.make_group('singlecoloursMS', (a, 0), f'single{i}')
+for a, i in enumerate(['CELESTIAL', 'PULSAR', 'STRATOSPHERE', 'LABRADORITE', 'METEORITE', 'SUNSET']):
+	sprites.make_group('singlecoloursMS', (a, 0), f'single{i}')
 # tabby
 for a, i in enumerate(['WHITE', 'PALEGREY', 'SILVER', 'GREY', 'DARKGREY', 'GHOST', 'BLACK']):
     sprites.make_group('tabbycolours', (a, 0), f'tabby{i}')
@@ -278,6 +290,12 @@ for a, i in enumerate(['CREAM', 'PALEGINGER', 'GOLDEN', 'GINGER', 'DARKGINGER', 
     sprites.make_group('tabbycolours', (a, 1), f'tabby{i}')
 for a, i in enumerate(['LIGHTBROWN', 'LILAC', 'BROWN', 'GOLDEN-BROWN', 'DARKBROWN', 'CHOCOLATE']):
     sprites.make_group('tabbycolours', (a, 2), f'tabby{i}')
+for a, i in enumerate(['MOONSTONE', 'LEONID', 'SKYWARD', 'SIDEREAL', 'DEMIURGE', 'DIVINE', 'INTERSTELLAR']):
+	sprites.make_group('tabbycoloursMS', (a, 0), f'tabby{i}')
+for a, i in enumerate(['HEAVENLY', 'DAWN', 'HOWLITE', 'SUNRISE', 'ASTRAL', 'PRISMATIC']):
+	sprites.make_group('tabbycoloursMS', (a, 0), f'tabby{i}')
+for a, i in enumerate(['CELESTIAL', 'PULSAR', 'STRATOSPHERE', 'LABRADORITE', 'METEORITE', 'SUNSET']):
+	sprites.make_group('tabbycoloursMS', (a, 0), f'tabby{i}')
 # marbled
 for a, i in enumerate(['WHITE', 'PALEGREY', 'SILVER', 'GREY', 'DARKGREY', 'GHOST', 'BLACK']):
     sprites.make_group('marbledcolours', (a, 0), f'marbled{i}')
@@ -285,6 +303,12 @@ for a, i in enumerate(['CREAM', 'PALEGINGER', 'GOLDEN', 'GINGER', 'DARKGINGER', 
     sprites.make_group('marbledcolours', (a, 1), f'marbled{i}')
 for a, i in enumerate(['LIGHTBROWN', 'LILAC', 'BROWN', 'GOLDEN-BROWN', 'DARKBROWN', 'CHOCOLATE']):
     sprites.make_group('marbledcolours', (a, 2), f'marbled{i}')
+for a, i in enumerate(['MOONSTONE', 'LEONID', 'SKYWARD', 'SIDEREAL', 'DEMIURGE', 'DIVINE', 'INTERSTELLAR']):
+	sprites.make_group('marbledcoloursMS', (a, 0), f'marbled{i}')
+for a, i in enumerate(['HEAVENLY', 'DAWN', 'HOWLITE', 'SUNRISE', 'ASTRAL', 'PRISMATIC']):
+	sprites.make_group('marbledcoloursMS', (a, 0), f'marbled{i}')
+for a, i in enumerate(['CELESTIAL', 'PULSAR', 'STRATOSPHERE', 'LABRADORITE', 'METEORITE', 'SUNSET']):
+	sprites.make_group('marbledcoloursMS', (a, 0), f'marbled{i}')
 # rosette
 for a, i in enumerate(['WHITE', 'PALEGREY', 'SILVER', 'GREY', 'DARKGREY', 'GHOST', 'BLACK']):
     sprites.make_group('rosettecolours', (a, 0), f'rosette{i}')
@@ -292,6 +316,12 @@ for a, i in enumerate(['CREAM', 'PALEGINGER', 'GOLDEN', 'GINGER', 'DARKGINGER', 
     sprites.make_group('rosettecolours', (a, 1), f'rosette{i}')
 for a, i in enumerate(['LIGHTBROWN', 'LILAC', 'BROWN', 'GOLDEN-BROWN', 'DARKBROWN', 'CHOCOLATE']):
     sprites.make_group('rosettecolours', (a, 2), f'rosette{i}')
+for a, i in enumerate(['MOONSTONE', 'LEONID', 'SKYWARD', 'SIDEREAL', 'DEMIURGE', 'DIVINE', 'INTERSTELLAR']):
+	sprites.make_group('rosettecoloursMS', (a, 0), f'rosette{i}')
+for a, i in enumerate(['HEAVENLY', 'DAWN', 'HOWLITE', 'SUNRISE', 'ASTRAL', 'PRISMATIC']):
+	sprites.make_group('rosettecoloursMS', (a, 0), f'rosette{i}')
+for a, i in enumerate(['CELESTIAL', 'PULSAR', 'STRATOSPHERE', 'LABRADORITE', 'METEORITE', 'SUNSET']):
+	sprites.make_group('rosettecoloursMS', (a, 0), f'rosette{i}')
 # smoke
 for a, i in enumerate(['WHITE', 'PALEGREY', 'SILVER', 'GREY', 'DARKGREY', 'GHOST', 'BLACK']):
     sprites.make_group('smokecolours', (a, 0), f'smoke{i}')
@@ -299,6 +329,12 @@ for a, i in enumerate(['CREAM', 'PALEGINGER', 'GOLDEN', 'GINGER', 'DARKGINGER', 
     sprites.make_group('smokecolours', (a, 1), f'smoke{i}')
 for a, i in enumerate(['LIGHTBROWN', 'LILAC', 'BROWN', 'GOLDEN-BROWN', 'DARKBROWN', 'CHOCOLATE']):
     sprites.make_group('smokecolours', (a, 2), f'smoke{i}')
+for a, i in enumerate(['MOONSTONE', 'LEONID', 'SKYWARD', 'SIDEREAL', 'DEMIURGE', 'DIVINE', 'INTERSTELLAR']):
+	sprites.make_group('smokecoloursMS', (a, 0), f'smoke{i}')
+for a, i in enumerate(['HEAVENLY', 'DAWN', 'HOWLITE', 'SUNRISE', 'ASTRAL', 'PRISMATIC']):
+	sprites.make_group('smokecoloursMS', (a, 0), f'smoke{i}')
+for a, i in enumerate(['CELESTIAL', 'PULSAR', 'STRATOSPHERE', 'LABRADORITE', 'METEORITE', 'SUNSET']):
+	sprites.make_group('smokecoloursMS', (a, 0), f'smoke{i}')
 # ticked
 for a, i in enumerate(['WHITE', 'PALEGREY', 'SILVER', 'GREY', 'DARKGREY', 'GHOST', 'BLACK']):
     sprites.make_group('tickedcolours', (a, 0), f'ticked{i}')
@@ -306,6 +342,12 @@ for a, i in enumerate(['CREAM', 'PALEGINGER', 'GOLDEN', 'GINGER', 'DARKGINGER', 
     sprites.make_group('tickedcolours', (a, 1), f'ticked{i}')
 for a, i in enumerate(['LIGHTBROWN', 'LILAC', 'BROWN', 'GOLDEN-BROWN', 'DARKBROWN', 'CHOCOLATE']):
     sprites.make_group('tickedcolours', (a, 2), f'ticked{i}')
+for a, i in enumerate(['MOONSTONE', 'LEONID', 'SKYWARD', 'SIDEREAL', 'DEMIURGE', 'DIVINE', 'INTERSTELLAR']):
+	sprites.make_group('tickedcoloursMS', (a, 0), f'ticked{i}')
+for a, i in enumerate(['HEAVENLY', 'DAWN', 'HOWLITE', 'SUNRISE', 'ASTRAL', 'PRISMATIC']):
+	sprites.make_group('tickedcoloursMS', (a, 0), f'ticked{i}')
+for a, i in enumerate(['CELESTIAL', 'PULSAR', 'STRATOSPHERE', 'LABRADORITE', 'METEORITE', 'SUNSET']):
+	sprites.make_group('tickedcoloursMS', (a, 0), f'ticked{i}')
 # speckled
 for a, i in enumerate(['WHITE', 'PALEGREY', 'SILVER', 'GREY', 'DARKGREY', 'GHOST', 'BLACK']):
     sprites.make_group('speckledcolours', (a, 0), f'speckled{i}')
@@ -313,6 +355,12 @@ for a, i in enumerate(['CREAM', 'PALEGINGER', 'GOLDEN', 'GINGER', 'DARKGINGER', 
     sprites.make_group('speckledcolours', (a, 1), f'speckled{i}')
 for a, i in enumerate(['LIGHTBROWN', 'LILAC', 'BROWN', 'GOLDEN-BROWN', 'DARKBROWN', 'CHOCOLATE']):
     sprites.make_group('speckledcolours', (a, 2), f'speckled{i}')
+for a, i in enumerate(['MOONSTONE', 'LEONID', 'SKYWARD', 'SIDEREAL', 'DEMIURGE', 'DIVINE', 'INTERSTELLAR']):
+	sprites.make_group('speckledcoloursMS', (a, 0), f'speckled{i}')
+for a, i in enumerate(['HEAVENLY', 'DAWN', 'HOWLITE', 'SUNRISE', 'ASTRAL', 'PRISMATIC']):
+	sprites.make_group('speckledcoloursMS', (a, 0), f'speckled{i}')
+for a, i in enumerate(['CELESTIAL', 'PULSAR', 'STRATOSPHERE', 'LABRADORITE', 'METEORITE', 'SUNSET']):
+	sprites.make_group('speckledcoloursMS', (a, 0), f'speckled{i}')
 # bengal
 for a, i in enumerate(['WHITE', 'PALEGREY', 'SILVER', 'GREY', 'DARKGREY', 'GHOST', 'BLACK']):
     sprites.make_group('bengalcolours', (a, 0), f'bengal{i}')
@@ -320,6 +368,12 @@ for a, i in enumerate(['CREAM', 'PALEGINGER', 'GOLDEN', 'GINGER', 'DARKGINGER', 
     sprites.make_group('bengalcolours', (a, 1), f'bengal{i}')
 for a, i in enumerate(['LIGHTBROWN', 'LILAC', 'BROWN', 'GOLDEN-BROWN', 'DARKBROWN', 'CHOCOLATE']):
     sprites.make_group('bengalcolours', (a, 2), f'bengal{i}')
+for a, i in enumerate(['MOONSTONE', 'LEONID', 'SKYWARD', 'SIDEREAL', 'DEMIURGE', 'DIVINE', 'INTERSTELLAR']):
+	sprites.make_group('bengalcoloursMS', (a, 0), f'bengal{i}')
+for a, i in enumerate(['HEAVENLY', 'DAWN', 'HOWLITE', 'SUNRISE', 'ASTRAL', 'PRISMATIC']):
+	sprites.make_group('bengalcoloursMS', (a, 0), f'bengal{i}')
+for a, i in enumerate(['CELESTIAL', 'PULSAR', 'STRATOSPHERE', 'LABRADORITE', 'METEORITE', 'SUNSET']):
+	sprites.make_group('bengalcoloursMS', (a, 0), f'bengal{i}')
 # mackerel
 for a, i in enumerate(['WHITE', 'PALEGREY', 'SILVER', 'GREY', 'DARKGREY', 'GHOST', 'BLACK']):
     sprites.make_group('mackerelcolours', (a, 0), f'mackerel{i}')
@@ -327,6 +381,12 @@ for a, i in enumerate(['CREAM', 'PALEGINGER', 'GOLDEN', 'GINGER', 'DARKGINGER', 
     sprites.make_group('mackerelcolours', (a, 1), f'mackerel{i}')
 for a, i in enumerate(['LIGHTBROWN', 'LILAC', 'BROWN', 'GOLDEN-BROWN', 'DARKBROWN', 'CHOCOLATE']):
     sprites.make_group('mackerelcolours', (a, 2), f'mackerel{i}')
+for a, i in enumerate(['MOONSTONE', 'LEONID', 'SKYWARD', 'SIDEREAL', 'DEMIURGE', 'DIVINE', 'INTERSTELLAR']):
+	sprites.make_group('mackerelcoloursMS', (a, 0), f'mackerel{i}')
+for a, i in enumerate(['HEAVENLY', 'DAWN', 'HOWLITE', 'SUNRISE', 'ASTRAL', 'PRISMATIC']):
+	sprites.make_group('mackerelcoloursMS', (a, 0), f'mackerel{i}')
+for a, i in enumerate(['CELESTIAL', 'PULSAR', 'STRATOSPHERE', 'LABRADORITE', 'METEORITE', 'SUNSET']):
+	sprites.make_group('mackerelcoloursMS', (a, 0), f'mackerel{i}')
 # classic
 for a, i in enumerate(['WHITE', 'PALEGREY', 'SILVER', 'GREY', 'DARKGREY', 'GHOST', 'BLACK']):
     sprites.make_group('classiccolours', (a, 0), f'classic{i}')
@@ -334,6 +394,12 @@ for a, i in enumerate(['CREAM', 'PALEGINGER', 'GOLDEN', 'GINGER', 'DARKGINGER', 
     sprites.make_group('classiccolours', (a, 1), f'classic{i}')
 for a, i in enumerate(['LIGHTBROWN', 'LILAC', 'BROWN', 'GOLDEN-BROWN', 'DARKBROWN', 'CHOCOLATE']):
     sprites.make_group('classiccolours', (a, 2), f'classic{i}')
+for a, i in enumerate(['MOONSTONE', 'LEONID', 'SKYWARD', 'SIDEREAL', 'DEMIURGE', 'DIVINE', 'INTERSTELLAR']):
+	sprites.make_group('classiccoloursMS', (a, 0), f'classic{i}')
+for a, i in enumerate(['HEAVENLY', 'DAWN', 'HOWLITE', 'SUNRISE', 'ASTRAL', 'PRISMATIC']):
+	sprites.make_group('classiccoloursMS', (a, 0), f'classic{i}')
+for a, i in enumerate(['CELESTIAL', 'PULSAR', 'STRATOSPHERE', 'LABRADORITE', 'METEORITE', 'SUNSET']):
+	sprites.make_group('classiccoloursMS', (a, 0), f'classic{i}')
 # sokoke
 for a, i in enumerate(['WHITE', 'PALEGREY', 'SILVER', 'GREY', 'DARKGREY', 'GHOST', 'BLACK']):
     sprites.make_group('sokokecolours', (a, 0), f'sokoke{i}')
@@ -341,6 +407,12 @@ for a, i in enumerate(['CREAM', 'PALEGINGER', 'GOLDEN', 'GINGER', 'DARKGINGER', 
     sprites.make_group('sokokecolours', (a, 1), f'sokoke{i}')
 for a, i in enumerate(['LIGHTBROWN', 'LILAC', 'BROWN', 'GOLDEN-BROWN', 'DARKBROWN', 'CHOCOLATE']):
     sprites.make_group('sokokecolours', (a, 2), f'sokoke{i}')
+for a, i in enumerate(['MOONSTONE', 'LEONID', 'SKYWARD', 'SIDEREAL', 'DEMIURGE', 'DIVINE', 'INTERSTELLAR']):
+	sprites.make_group('sokokecoloursMS', (a, 0), f'sokoke{i}')
+for a, i in enumerate(['HEAVENLY', 'DAWN', 'HOWLITE', 'SUNRISE', 'ASTRAL', 'PRISMATIC']):
+	sprites.make_group('sokokecoloursMS', (a, 0), f'sokoke{i}')
+for a, i in enumerate(['CELESTIAL', 'PULSAR', 'STRATOSPHERE', 'LABRADORITE', 'METEORITE', 'SUNSET']):
+	sprites.make_group('sokokecoloursMS', (a, 0), f'sokoke{i}')
 # agouti
 for a, i in enumerate(['WHITE', 'PALEGREY', 'SILVER', 'GREY', 'DARKGREY', 'GHOST', 'BLACK']):
     sprites.make_group('agouticolours', (a, 0), f'agouti{i}')
@@ -348,6 +420,12 @@ for a, i in enumerate(['CREAM', 'PALEGINGER', 'GOLDEN', 'GINGER', 'DARKGINGER', 
     sprites.make_group('agouticolours', (a, 1), f'agouti{i}')
 for a, i in enumerate(['LIGHTBROWN', 'LILAC', 'BROWN', 'GOLDEN-BROWN', 'DARKBROWN', 'CHOCOLATE']):
     sprites.make_group('agouticolours', (a, 2), f'agouti{i}')
+for a, i in enumerate(['MOONSTONE', 'LEONID', 'SKYWARD', 'SIDEREAL', 'DEMIURGE', 'DIVINE', 'INTERSTELLAR']):
+	sprites.make_group('agouticoloursMS', (a, 0), f'agouti{i}')
+for a, i in enumerate(['HEAVENLY', 'DAWN', 'HOWLITE', 'SUNRISE', 'ASTRAL', 'PRISMATIC']):
+	sprites.make_group('agouticoloursMS', (a, 0), f'agouti{i}')
+for a, i in enumerate(['CELESTIAL', 'PULSAR', 'STRATOSPHERE', 'LABRADORITE', 'METEORITE', 'SUNSET']):
+	sprites.make_group('agouticoloursMS', (a, 0), f'agouti{i}')
 # singlestripe
 for a, i in enumerate(['WHITE', 'PALEGREY', 'SILVER', 'GREY', 'DARKGREY', 'GHOST', 'BLACK']):
     sprites.make_group('singlestripecolours', (a, 0), f'singlestripe{i}')
@@ -355,6 +433,12 @@ for a, i in enumerate(['CREAM', 'PALEGINGER', 'GOLDEN', 'GINGER', 'DARKGINGER', 
     sprites.make_group('singlestripecolours', (a, 1), f'singlestripe{i}')
 for a, i in enumerate(['LIGHTBROWN', 'LILAC', 'BROWN', 'GOLDEN-BROWN', 'DARKBROWN', 'CHOCOLATE']):
     sprites.make_group('singlestripecolours', (a, 2), f'singlestripe{i}')
+for a, i in enumerate(['MOONSTONE', 'LEONID', 'SKYWARD', 'SIDEREAL', 'DEMIURGE', 'DIVINE', 'INTERSTELLAR']):
+	sprites.make_group('singlestripecoloursMS', (a, 0), f'singlestripe{i}')
+for a, i in enumerate(['HEAVENLY', 'DAWN', 'HOWLITE', 'SUNRISE', 'ASTRAL', 'PRISMATIC']):
+	sprites.make_group('singlestripecoloursMS', (a, 0), f'singlestripe{i}')
+for a, i in enumerate(['CELESTIAL', 'PULSAR', 'STRATOSPHERE', 'LABRADORITE', 'METEORITE', 'SUNSET']):
+	sprites.make_group('singlestripecoloursMS', (a, 0), f'singlestripe{i}')
     
 # new new torties
 for a, i in enumerate(['ONE', 'TWO', 'THREE', 'FOUR', 'REDTAIL', 'DELILAH', 'HALF', 'STREAK', 'MASK']):
