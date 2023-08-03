@@ -31,10 +31,11 @@ class Scar_Events():
     ]
     claw_scars = [
         "ONE", "TWO", "SNOUT", "TAILSCAR", "CHEEK",
-        "SIDE", "THROAT", "TAILBASE", "BELLY", "FACE"
+        "SIDE", "THROAT", "TAILBASE", "BELLY", "FACE",
+        "BRIDGE"
     ]
     leg_scars = [
-        "NOPAW", "TOETRAP", "MANLEG"
+        "NOPAW", "TOETRAP", "MANLEG",
     ]
     tail_scars = [
         "TAILSCAR", "TAILBASE", "NOTAIL", "HALFTAIL", "MANTAIL"
@@ -55,21 +56,35 @@ class Scar_Events():
     quill_scars = [
         "QUILLCHUNK", "QUILLSCRATCH"
     ]
+    head_scars = [
+        "SNOUT", "CHEEK", "BRIDGE", "BEAKCHEEK"
+    ]
+    bone_scars = [
+        "MANLEG",  "TOETRAP"
+    ]
+    back_scars = [
+        "TWO", "TAILBASE"
+    ]
     
     scar_allowed = {
         "bite-wound": canid_scars,
         "cat-bite": bite_scars,
-        "severe_burn": burn_scars,
+        "severe burn": burn_scars,
         "rat bite": rat_scars,
         "snake bite": snake_scars,
         "mangled tail": tail_scars,
         "mangled leg": leg_scars,
         "torn ear": ear_scars,
         "frostbite": frostbite_scars,
+        "torn pelt": claw_scars + beak_scars,
         "damaged eyes": eye_scars,
         "quilled by porcupine": quill_scars,
         "claw-wound": claw_scars,
-        "beak bite": beak_scars
+        "beak bite": beak_scars,
+        "broken jaw": head_scars,
+        "broken back": back_scars,
+        "broken bone": bone_scars,
+        "head damage": head_scars
     }
     
 
@@ -87,13 +102,15 @@ class Scar_Events():
         if injury_name not in self.scar_allowed:
             return None, None
         
-        chance = max(int(13 - cat.injuries[injury_name]["moons_with"]), 1)
+        moons_with = game.clan.age - cat.injuries[injury_name]["moon_start"]
+        chance = max(5 - moons_with, 1)
         
         amount_per_med = get_amount_cat_for_one_medic(game.clan)
         if medical_cats_condition_fulfilled(game.cat_class.all_cats.values(), amount_per_med):
-            chance += 3
+            chance += 2
+        
         if len(cat.pelt.scars) < 4 and not int(random.random() * chance):
-
+            
             # move potential scar text into displayed scar text
             
 
@@ -104,6 +121,8 @@ class Scar_Events():
                 scar_pool = [i for i in scar_pool if i not in ['TOETRAP', 'RATBITE', "FROSTSOCK"]]
             if 'NOTAIL' in cat.pelt.scars:
                 scar_pool = [i for i in scar_pool if i not in ["HALFTAIL", "TAILBASE", "TAILSCAR", "MANTAIL", "BURNTAIL", "FROSTTAIL"]]
+            if 'HALFTAIL' in cat.pelt.scars:
+                scar_pool = [i for i in scar_pool if i not in ["TAILSCAR", "MANTAIL", "FROSTTAIL"]]
             if "BRIGHTHEART" in cat.pelt.scars:
                 scar_pool = [i for i in scar_pool if i not in ["RIGHTBLIND", "BOTHBLIND"]]
             if 'BOTHBLIND' in cat.pelt.scars:
@@ -120,9 +139,19 @@ class Scar_Events():
                 scar_pool = [i for i in scar_pool if i not in ['LEFTEAR']]
             if 'NORIGHT' in cat.pelt.scars:
                 scar_pool = [i for i in scar_pool if i not in ['RIGHTEAR']]
+                
+            # Extra check for disabling scars.
+            if int(random.random() * 3):
+                condition_scars = {
+                    "LEGBITE", "THREE", "NOPAW", "TOETRAP", "NOTAIL", "HALFTAIL", "LEFTEAR", "RIGHTEAR",
+                    "MANLEG", "BRIGHTHEART", "NOLEFTEAR", "NORIGHTEAR", "NOEAR", "LEFTBLIND",
+                    "RIGHTBLIND", "BOTHBLIND", "RATBITE"
+                }
+                
+                scar_pool = list(set(scar_pool).difference(condition_scars))
+                
+                
             
-            
-            scar_pool = [i for i in scar_pool]
             # If there are not new scars to give them, return None, None.
             if not scar_pool:
                 return None, None

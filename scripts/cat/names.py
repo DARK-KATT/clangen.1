@@ -106,12 +106,10 @@ class Name(): # just reads the json, you can ignore this
             nono_name = self.prefix + self.suffix
             # Prevent double names (ex. Iceice)
             # Prevent suffixes containing the prefix (ex. Butterflyfly)
-
+            
             i = 0
-            while nono_name in self.names_dict[
-                "inappropriate_names"] or triple_letter or double_animal or self.suffix == self.prefix.casefold() or str(
-                    self.suffix) in \
-                    self.prefix.casefold() and not str(self.suffix) == '':
+            while nono_name.lower() in self.names_dict["inappropriate_names"] or triple_letter or double_animal or \
+                    self.suffix.lower() == self.prefix.lower() or (self.suffix.lower() in self.prefix.lower() and not str(self.suffix) == ''):
 
                 # check if random die was for prefix
                 if name_fixpref:

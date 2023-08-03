@@ -173,7 +173,6 @@ class GenerateEvents:
                         collateral_damage=event["collateral_damage"]
                     )
                     break
-                #print(event)
                 return event
 
     def possible_short_events(self, cat_type=None, age=None, event_type=None):
@@ -253,7 +252,7 @@ class GenerateEvents:
 
         return event_list
 
-    def filter_possible_short_events(self, possible_events, cat, other_cat, war, enemy_clan, other_clan, alive_kits, murder=False):
+    def filter_possible_short_events(self, possible_events, cat, other_cat, war, enemy_clan, other_clan, alive_kits, murder=False, murder_reveal=False):
         final_events = []
 
         minor = []
@@ -292,6 +291,11 @@ class GenerateEvents:
             if murder and "murder" not in event.tags:
                 continue
             if not murder and "murder" in event.tags:
+                continue
+
+            if murder_reveal and "murder_reveal" not in event.tags:
+                continue
+            if not murder_reveal and "murder_reveal" in event.tags:
                 continue
 
             # make complete leader death less likely until the leader is over 150 moons
@@ -384,7 +388,7 @@ class GenerateEvents:
                     continue
                 if "other_cat_elder" in event.tags and other_cat.status != "elder":
                     continue
-                if "other_cat_adult" in event.tags and other_cat.age in ["elder", "kitten", "newborn"]:
+                if "other_cat_adult" in event.tags and other_cat.age in ["senior", "kitten", "newborn"]:
                     continue
                 if "other_cat_kit" in event.tags and other_cat.status not in ['newborn', 'kitten']:
                     continue
@@ -548,7 +552,6 @@ class GenerateEvents:
                     final_events = major
                 else:
                     final_events = severe
-                #print(cat.status, severity_chosen[0])
 
         return final_events
 
@@ -584,8 +587,8 @@ class GenerateEvents:
         if trait in events:
             possible_events.extend(events[trait][body_status])
 
-        # grab family events if they're needed
-        if family_relation != 'general':
+        # grab family events if they're needed. Family events should not be romantic. 
+        if family_relation != 'general' and rel_value != "romantic":
             events = self.get_death_reaction_dicts(family_relation, rel_value)
             possible_events.extend(events["general"][body_status])
             if trait in events:

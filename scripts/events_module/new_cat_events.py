@@ -8,6 +8,8 @@ from scripts.events_module.generate_events import GenerateEvents
 from scripts.utility import event_text_adjust, change_clan_relations, change_relationship_values, create_new_cat
 from scripts.game_structure.game_essentials import game
 from scripts.event_class import Single_Event
+from scripts.cat.names import Name
+from scripts.cat.history import History
 
 
 # ---------------------------------------------------------------------------- #
@@ -49,8 +51,13 @@ class NewCatEvents:
                 if name_change == 1 or backstory == 'former Clancat':
                     event_text = event_text + f" They decide to keep their name."
                 elif name_change == 2 and backstory != 'former Clancat':
-                    outside_cat.name.prefix = random.choice(names.names_dict["normal_prefixes"])
-                    outside_cat.name.suffix = random.choice(names.names_dict["normal_suffixes"])
+                    outside_cat.name = Name(outside_cat.status, 
+                                            colour=outside_cat.pelt.colour,
+                                            eyes=outside_cat.pelt.eye_colour,
+                                            pelt=outside_cat.pelt.name,
+                                            tortiepattern=outside_cat.pelt.tortiepattern,
+                                            biome=game.clan.biome)
+                    
                     event_text = event_text + f" They decide to take a new name, {outside_cat.name}."
                 outside_cat.thought = "Is looking around the camp with wonder"
                 involved_cats = [outside_cat.ID]
@@ -60,10 +67,13 @@ class NewCatEvents:
                 for the_cat in outside_cat.all_cats.values():
                     if the_cat.dead or the_cat.outside or the_cat.ID == outside_cat.ID:
                         continue
-                    the_cat.relationships[outside_cat.ID] = Relationship(the_cat, outside_cat)
-                    outside_cat.relationships[the_cat.ID] = Relationship(outside_cat, the_cat)
+                    the_cat.create_one_relationship(outside_cat)
+                    outside_cat.create_one_relationship(the_cat)
+
                 # takes cat out of the outside cat list
                 game.clan.add_to_clan(outside_cat)
+                history = History()
+                history.add_beginning(outside_cat)
 
                 return [outside_cat]
 
@@ -148,8 +158,9 @@ class NewCatEvents:
 
             if "m_c" in new_cat_event.tags:
                 # print('moon event new cat rel gain')
-                cat.relationships[new_cat.ID] = Relationship(cat, new_cat)
-                new_cat.relationships[cat.ID] = Relationship(new_cat, cat)
+                cat.create_one_relationship(new_cat)
+                new_cat.create_one_relationship(cat)
+                
                 new_to_clan_cat = game.config["new_cat"]["rel_buff"]["new_to_clan_cat"]
                 clan_cat_to_new = game.config["new_cat"]["rel_buff"]["clan_cat_to_new"]
                 change_relationship_values(
@@ -182,8 +193,10 @@ class NewCatEvents:
                     siblings = new_cat.get_siblings()
                     for sibling in siblings:
                         sibling = Cat.fetch_cat(sibling)
-                        sibling.relationships[new_cat.ID] = Relationship(sibling, new_cat)
-                        new_cat.relationships[sibling.ID] = Relationship(new_cat, sibling)
+                        
+                        sibling.create_one_relationship(new_cat)
+                        new_cat.create_one_relationship(sibling)
+                        
                         cat1_to_cat2 = game.config["new_cat"]["sib_buff"]["cat1_to_cat2"]
                         cat2_to_cat1 = game.config["new_cat"]["sib_buff"]["cat2_to_cat1"]
                         change_relationship_values(
@@ -243,12 +256,12 @@ class NewCatEvents:
         return created_cats
 
     def has_outside_cat(self):
-        outside_cats = (cat for id, cat in Cat.outside_cats.items() if
-                        cat.status in ['kittypet', 'loner', 'rogue', 'former Clancat'] and not cat.dead)
+        outside_cats = [i for i in Cat.all_cats.values() if i.status in ["kittypet", "loner", "rogue", "former Clancat"] and not i.dead and i.outside]
         return any(outside_cats)
 
     def select_outside_cat(self):
-        for cat_id, cat in Cat.outside_cats.items():
+        outside_cats = [i for i in Cat.all_cats.values() if i.status in ["kittypet", "loner", "rogue", "former Clancat"] and not i.dead and i.outside]
+        for cat in outside_cats:  # iterating over the generated list
             if cat.status in ["kittypet", "loner", "rogue", "former Clancat"] and not cat.dead:
                 return cat
 

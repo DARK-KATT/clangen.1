@@ -11,11 +11,11 @@ from ..game_structure.windows import ChangeCatName, SpecifyCatGender, KillCat, S
 
 import ujson
 
-from scripts.utility import event_text_adjust, scale, ACC_DISPLAY, process_text
+from scripts.utility import event_text_adjust, scale, ACC_DISPLAY, process_text, chunks
 
 from .base_screens import Screens
 
-from scripts.utility import get_text_box_theme, scale_dimentions, generate_sprite
+from scripts.utility import get_text_box_theme, scale_dimentions, generate_sprite, shorten_text_to_fit
 from scripts.cat.cats import Cat, BACKSTORIES
 from scripts.cat.pelts import Pelt
 from scripts.game_structure import image_cache
@@ -121,19 +121,10 @@ class ProfileScreen(Screens):
         self.sub_tab_1 = None
         self.backstory_background = None
         self.history_text_box = None
-        self.alert_tool_tip = None
-        self.alert_visible = None
-        self.alert = None
-        self.first_page = None
-        self.second_page = None
         self.conditions_tab_button = None
-        self.second_page_visible = None
-        self.first_page_visible = None
-        self.left_arrow = None
-        self.right_arrow = None
-        self.condition_detail_text = None
-        self.condition_name_text = None
-        self.condition_box = None
+        self.condition_container = None
+        self.left_conditions_arrow = None
+        self.right_conditions_arrow = None
         self.conditions_background = None
         self.previous_cat = None
         self.next_cat = None
@@ -277,13 +268,39 @@ class ProfileScreen(Screens):
                 ChangeCatName(self.the_cat)
             elif event.ui_element == self.specify_gender_button:
                 SpecifyCatGender(self.the_cat)
+                '''if self.the_cat.genderalign in ["female", "trans female"]:
+                    self.the_cat.pronouns = [self.the_cat.default_pronouns[1].copy()]
+                elif self.the_cat.genderalign in ["male", "trans male"]:
+                    self.the_cat.pronouns = [self.the_cat.default_pronouns[2].copy()]
+                else: self.the_cat.pronouns = [self.the_cat.default_pronouns[0].copy()]'''
+            #when button is pressed...
             elif event.ui_element == self.cis_trans_button:
-                if self.the_cat.genderalign != "female" and self.the_cat.genderalign != "male":
+                #if the cat is anything besides m/f/transm/transf then turn them back to cis
+                if self.the_cat.genderalign not in ["female", "trans female", "male", "trans male"]:
                     self.the_cat.genderalign = self.the_cat.gender
-                elif self.the_cat.gender == "male" and self.the_cat.genderalign in ['male', 'female']:
+                elif self.the_cat.gender == "male" and self.the_cat.genderalign == 'female':
+                    self.the_cat.genderalign = self.the_cat.gender
+                elif self.the_cat.gender == "female" and self.the_cat.genderalign == 'male':
+                    self.the_cat.genderalign = self.the_cat.gender
+                #if the cat is cis (gender & gender align are the same) then set them to trans
+                #cis males -> trans female first
+                elif self.the_cat.gender == "male" and self.the_cat.genderalign == 'male':
                     self.the_cat.genderalign = 'trans female'
-                elif self.the_cat.gender == "female" and self.the_cat.genderalign in ['male', 'female']:
+                #cis females -> trans male
+                elif self.the_cat.gender == "female" and self.the_cat.genderalign == 'female':
                     self.the_cat.genderalign = 'trans male'
+                #if the cat is trans then set them to nonbinary
+                elif self.the_cat.genderalign in ["trans female", "trans male"]:
+                    self.the_cat.genderalign = 'nonbinary'
+                '''#pronoun handler
+                if self.the_cat.genderalign in ["female", "trans female"]:
+                    self.the_cat.pronouns = [self.the_cat.default_pronouns[1].copy()]
+                elif self.the_cat.genderalign in ["male", "trans male"]:
+                    self.the_cat.pronouns = [self.the_cat.default_pronouns[2].copy()]
+                elif self.the_cat.genderalign in ["nonbinary"]:
+                    self.the_cat.pronouns = [self.the_cat.default_pronouns[0].copy()]
+                elif self.the_cat.genderalign not in ["female", "trans female", "male", "trans male"]:
+                    self.the_cat.pronouns = [self.the_cat.default_pronouns[0].copy()]'''
                 self.clear_profile()
                 self.build_profile()
                 self.update_disabled_buttons_and_text()
@@ -361,16 +378,12 @@ class ProfileScreen(Screens):
 
         # Conditions Tab
         elif self.open_tab == 'conditions':
-            if event.ui_element == self.right_arrow:
-                self.first_page_visible = False
-                self.second_page_visible = True
-                self.left_arrow.enable()
-                self.right_arrow.disable()
-            if event.ui_element == self.left_arrow:
-                self.second_page_visible = False
-                self.first_page_visible = True
-                self.right_arrow.enable()
-                self.left_arrow.disable()
+            if event.ui_element == self.right_conditions_arrow:
+                self.conditions_page += 1
+                self.display_conditions_page()
+            if event.ui_element == self.left_conditions_arrow:
+                self.conditions_page -= 1
+                self.display_conditions_page()
 
     def screen_switches(self):
         self.the_cat = Cat.all_cats.get(game.switches['cat'])
@@ -464,9 +477,8 @@ class ProfileScreen(Screens):
             is_df_instructor = True
 
         # Info in string
-        cat_name = str(self.the_cat.name)  # name
-        if len(cat_name) >= 40:
-            cat_name = f"{cat_name[0:39]}..."
+        cat_name = str(self.the_cat.name)
+        cat_name = shorten_text_to_fit(cat_name, 425, 40)
         if self.the_cat.dead:
             cat_name += " (dead)"  # A dead cat will have the (dead) sign next to their name
         if is_sc_instructor:
@@ -474,8 +486,7 @@ class ProfileScreen(Screens):
         if is_df_instructor:
             self.the_cat.thought = "Hello. I am here to drag the dead cats of " + game.clan.name + "Clan into the Dark Forest."
 
-        # Write cat name
-        self.og_name = self.the_cat.name
+
         self.profile_elements["cat_name"] = pygame_gui.elements.UITextBox(cat_name,
                                                                           scale(pygame.Rect((50, 280), (-1, 80))),
                                                                           object_id=get_text_box_theme(
@@ -545,11 +556,10 @@ class ProfileScreen(Screens):
 
         # Fullscreen
         if game.settings['fullscreen']:
-            x_pos = 740 - int(name_text_size.width * 7 / 15)
+            x_pos = 745 - name_text_size.width//2
         else:
             x_pos = 740 - name_text_size.width
-        # TODO: positioning is weird. closer to names on some, further on others
-        # this only happens on fullscreen :waaaaaaa:
+
         self.profile_elements["favourite_button"] = UIImageButton(scale(pygame.Rect
                                                                         ((x_pos, 287), (56, 56))),
                                                                   "",
@@ -657,26 +667,28 @@ class ProfileScreen(Screens):
 
         previous_cat = 0
         next_cat = 0
+        current_cat_found = 0
         if self.the_cat.dead and not is_instructor and self.the_cat.df == game.clan.instructor.df and \
                 not (self.the_cat.outside or self.the_cat.exiled):
             previous_cat = game.clan.instructor.ID
 
         if is_instructor:
-            next_cat = 1
+            current_cat_found = 1
 
         for check_cat in Cat.all_cats_list:
             if check_cat.ID == self.the_cat.ID:
-                next_cat = 1
+                current_cat_found = 1
             else:
-                if next_cat == 0 and check_cat.ID != self.the_cat.ID and check_cat.dead == self.the_cat.dead \
+                if current_cat_found == 0 and check_cat.ID != self.the_cat.ID and check_cat.dead == self.the_cat.dead \
                         and check_cat.ID != game.clan.instructor.ID and check_cat.outside == self.the_cat.outside and \
                         check_cat.df == self.the_cat.df and not check_cat.faded:
                     previous_cat = check_cat.ID
 
-                elif next_cat == 1 and check_cat != self.the_cat.ID and check_cat.dead == self.the_cat.dead \
+                elif current_cat_found == 1 and check_cat != self.the_cat.ID and check_cat.dead == self.the_cat.dead \
                         and check_cat.ID != game.clan.instructor.ID and check_cat.outside == self.the_cat.outside and \
                         check_cat.df == self.the_cat.df and not check_cat.faded:
                     next_cat = check_cat.ID
+                    break
 
                 elif int(next_cat) > 1:
                     break
@@ -1094,7 +1106,7 @@ class ProfileScreen(Screens):
             if app_history:
                 life_history.append(app_history)
                 
-            #Get mentorshif text if it exists
+            #Get mentorship text if it exists
             mentor_history = self.get_mentorship_text()
             if mentor_history:
                 life_history.append(mentor_history)
@@ -1181,11 +1193,11 @@ class ProfileScreen(Screens):
                 if i != 0:
                     sentence_beginners = [
                         "This cat",
-                        "Then {PRONOUN/m_c/subject} were",
-                        "{PRONOUN/m_c/subject/CAP} were also",
-                        "Also, {PRONOUN/m_c/subject} were",
+                        "Then {PRONOUN/m_c/subject} {VERB/m_c/were/was}",
+                        "{PRONOUN/m_c/subject/CAP} {VERB/m_c/were/was} also",
+                        "Also, {PRONOUN/m_c/subject} {VERB/m_c/were/was}",
                         "As well as",
-                        "{PRONOUN/m_c/subject/CAP} were then"
+                        "{PRONOUN/m_c/subject/CAP} {VERB/m_c/were/was} then"
                     ]
                     chosen = choice(sentence_beginners)
                     if chosen == 'This cat':
@@ -1202,58 +1214,6 @@ class ProfileScreen(Screens):
             scar_history = ' '.join(scar_text)
 
         return scar_history
-
-    '''def adjust_skill_change_text(self, skill, mentor):
-        """
-        adjust the skill text as needed.  if a mentor needs to be mentioned, set mentor to True
-        """
-        adjust_skill = 'this should not appear - skill text adjustments'
-        vowels = ['e', 'a', 'i', 'o', 'u']
-        skill_paths = SKILLS["paths"]
-        skill_grammar_lists = {
-            "grow_as": ['dream', 'prophet'],
-            "grow_a": ['sense', 'star'],
-            "gain_more": ['camp', "ghost"],
-            "become": ['clever', 'clairvoyant'],
-            "become_a": ['teacher', 'hunter', 'fighter', 'runner', 'climber', 'swimmer', 'speaker', 'mediator',
-                         "kit", "story", "lore", "healer", "omen", "prophet"]
-        }
-        for group in skill_grammar_lists:
-            # find which group it is to assign proper text
-            if mentor:
-                if group == 'grow_as':
-                    adjust_skill = 'grow as a '
-                elif group == 'grow_a':
-                    adjust_skill = 'grow a '
-                elif group == 'gain_more':
-                    adjust_skill = "gain more skills with {PRONOUN/m_c/poss}"
-                elif group == 'become':
-                    adjust_skill = "become "
-                else:
-                    adjust_skill = 'become a '
-            else:
-                if group == 'grow_as':
-                    adjust_skill = 'grew as a '
-                elif group == 'grow_a':
-                    adjust_skill = 'grew a '
-                elif group == 'gain_more':
-                    adjust_skill = "gained more skills with {PRONOUN/m_c/poss}"
-                elif group == 'become':
-                    adjust_skill = "became "
-                else:
-                    adjust_skill = 'became a '
-            # now check if this is the group the skill fits in
-            for path in skill_grammar_lists[group]:
-                if skill in skill_paths.get(path):
-                    adjust_skill += skill
-                    # adjust a/an if need be
-                    for y in vowels:
-                        if 'a' not in adjust_skill:
-                            break
-                        if skill.startswith(y):
-                            adjust_skill = adjust_skill.replace(' a ', ' an ')
-                            break
-        return adjust_skill'''
 
     def get_apprenticeship_text(self):
         """
@@ -1274,7 +1234,7 @@ class ProfileScreen(Screens):
             valid_formor_mentors = [Cat.fetch_cat(i) for i in self.the_cat.former_mentor if 
                                     isinstance(Cat.fetch_cat(i), Cat)]
             if valid_formor_mentors:
-                influence_history += "{PRONOUN/m_c/subject/CAP} {VERB/m_c/was/were} mentored by "
+                influence_history += "{PRONOUN/m_c/subject/CAP} {VERB/m_c/were/was} mentored by "
                 if len(valid_formor_mentors) > 1:
                     influence_history += ", ".join([str(i.name) for i in valid_formor_mentors[:-1]]) + " and " + \
                         str(valid_formor_mentors[-1].name) + ". "
@@ -1283,7 +1243,7 @@ class ProfileScreen(Screens):
             else:
                 influence_history += "This cat either did not have a mentor, or {PRONOUN/m_c/poss} mentor is unknown. "
             
-            # Seocnd, do the facet/personality effect
+            # Second, do the facet/personality effect
             trait_influence = []
             if "trait" in mentor_influence and mentor_influence["trait"] != None:
                 if ("Benevolent" or "Abrasive" or "Reserved" or "Outgoing") in mentor_influence["trait"]:
@@ -1341,7 +1301,6 @@ class ProfileScreen(Screens):
             influence_history += " ".join(skill_influence)
 
         app_ceremony = History.get_app_ceremony(self.the_cat)
-        #print(app_ceremony)
 
         graduation_history = ""
         if app_ceremony:
@@ -1395,13 +1354,16 @@ class ProfileScreen(Screens):
         
 
     def get_text_for_murder_event(self, event, death):
+        ''' returns the adjusted murder history text for the victim '''
         if event["text"] == death["text"] and event["moon"] == death["moon"]:
-            if event["revealed"] is True:
-                return event_text_adjust(Cat, event["text"], self.the_cat, Cat.fetch_cat(death["involved"]))
+            if event["revealed"] is True: 
+                final_text = event_text_adjust(Cat, event["text"], self.the_cat, Cat.fetch_cat(death["involved"]))
+                if event.get("revelation_text"):
+                    final_text = final_text + event["revelation_text"]
+                return final_text
             else:
                 return event_text_adjust(Cat, event["unrevealed_text"], self.the_cat, Cat.fetch_cat(death["involved"]))
         return None
-
 
 
     def get_death_text(self):
@@ -1422,7 +1384,6 @@ class ProfileScreen(Screens):
             for index, death in enumerate(death_history):
                 found_murder = False  # Add this line to track if a matching murder event is found
                 if "is_victim" in murder_history:
-                    print(str(murder_history))
                     for event in murder_history["is_victim"]:
                         text = self.get_text_for_murder_event(event, death)
                         if text is not None:
@@ -1438,9 +1399,22 @@ class ProfileScreen(Screens):
                 if self.the_cat.status == 'leader':
                     if index == death_number - 1 and self.the_cat.dead:
                         if death_number == 9:
-                            life_text = "lost their final life"
+                            life_text = "lost {PRONOUN/m_c/poss} final life"
+                        elif death_number == 1:
+                            life_text = "lost all of {PRONOUN/m_c/poss} lives"
                         else:
-                            life_text = "lost their final lives"
+                            life_text = "lost the rest of {PRONOUN/m_c/poss} lives"
+                    else:
+                        life_text = "lost a life"
+                elif death_number > 1:
+                    #for retired leaders
+                    if index == death_number - 1 and self.the_cat.dead:
+                        life_text = "lost {PRONOUN/m_c/poss} last remaining life"
+                        # added code
+                        if "This cat was" in text:
+                            text = text.replace("This cat was", "{VERB/m_c/were/was}")
+                        else:
+                            text = text[0].lower() + text[1:]
                     else:
                         life_text = "lost a life"
                 else:
@@ -1465,7 +1439,11 @@ class ProfileScreen(Screens):
                 else:
                     deaths = all_deaths[0]
 
-                text = str(self.the_cat.name) + " " + deaths + "."
+                if not deaths.endswith('.'):
+                    deaths += "."
+
+                text = str(self.the_cat.name) + " " + deaths
+
             else:
                 text = all_deaths[0]
 
@@ -1478,57 +1456,58 @@ class ProfileScreen(Screens):
 
     def get_murder_text(self):
         """
-        returns adjusted murder history text
+        returns adjusted murder history text FOR THE MURDERER
 
         """
         murder_history = History.get_murders(self.the_cat)
         victim_text = ""
-        murdered_text = ""
 
         if game.switches['show_history_moons']:
             moons = True
         else:
             moons = False
+        victims = []
         if murder_history:
             if 'is_murderer' in murder_history:
-                victims = murder_history["is_murderer"]
-            else:
-                victims = []
+                victims = murder_history["is_murderer"]                
 
-            # if "is_victim" in murder_history:
-            #    murderers = murder_history["is_victim"]
-            # else:
-            #    murderers = []
+        if len(victims) > 0:
+            victim_names = {}
+            name_list = []
+            reveal_text = None
 
-            if victims:
-                victim_names = {}
-                name_list = []
+            for victim in victims:
+                if not Cat.fetch_cat(victim["victim"]):
+                    continue 
+                name = str(Cat.fetch_cat(victim["victim"]).name)
 
-                for victim in victims:
-                    if not Cat.fetch_cat(victim["victim"]):
-                        continue 
-                    name = str(Cat.fetch_cat(victim["victim"]).name)
+                if victim["revealed"]:
+                    victim_names[name] = []
+                    if victim.get("revelation_text"):
+                        reveal_text = str(victim["revelation_text"])
+                    if moons:
+                        victim_names[name].append(victim["moon"])
 
-                    if victim["revealed"]:
-                        victim_names[name] = []
-                        if moons:
-                            victim_names[name].append(victim["moon"])
-
-                if victim_names:
-                    for name in victim_names:
-                        if not moons:
-                            name_list.append(name)
-                        else:
-                            name_list.append(name + f" (Moon {', '.join(victim_names[name])})")
-
-                    if len(name_list) == 1:
-                        victim_text = f"{self.the_cat.name} murdered {name_list[0]}."
-                    elif len(victim_names) == 2:
-                        victim_text = f"{self.the_cat.name} murdered {' and '.join(name_list)}."
+            if victim_names:
+                for name in victim_names:
+                    if not moons:
+                        name_list.append(name)
                     else:
-                        victim_text = f"{self.the_cat.name} murdered {', '.join(name_list[:-1])}, and {name_list[-1]}."
+                        name_list.append(name + f" (Moon {', '.join(victim_names[name])})")
 
-        #print(victim_text)
+                if len(name_list) == 1:
+                    victim_text = f"{self.the_cat.name} murdered {name_list[0]}."
+                elif len(victim_names) == 2:
+                    victim_text = f"{self.the_cat.name} murdered {' and '.join(name_list)}."
+                else:
+                    victim_text = f"{self.the_cat.name} murdered {', '.join(name_list[:-1])}, and {name_list[-1]}."
+
+            if reveal_text:
+                cat_dict = {
+                        "m_c": (str(self.the_cat.name), choice(self.the_cat.pronouns))
+                    }
+                victim_text = f'{victim_text} {process_text(reveal_text, cat_dict)}'
+
         return victim_text
 
     def toggle_conditions_tab(self):
@@ -1542,12 +1521,13 @@ class ProfileScreen(Screens):
             pass
         else:
             self.open_tab = 'conditions'
-            self.right_arrow = UIImageButton(
+            self.conditions_page = 0
+            self.right_conditions_arrow = UIImageButton(
                 scale(pygame.Rect((1418, 1080), (68, 68))),
                 "",
                 object_id='#arrow_right_button', manager=MANAGER
             )
-            self.left_arrow = UIImageButton(
+            self.left_conditions_arrow = UIImageButton(
                 scale(pygame.Rect((118, 1080), (68, 68))),
                 "",
                 object_id='#arrow_left_button'
@@ -1557,176 +1537,83 @@ class ProfileScreen(Screens):
                 self.conditions_tab
             )
 
-            self.first_page_visible = True
-            self.first_page = pygame_gui.core.UIContainer(
-                scale(pygame.Rect((178, 942), (1248, 302))),
-                MANAGER,
-                visible=self.first_page_visible)
-
-            # holds next four conditions, displays only once arrow button is hit
-            self.second_page_visible = False
-            self.second_page = pygame_gui.core.UIContainer(
-                scale(pygame.Rect((178, 942), (1248, 302))),
-                MANAGER,
-                visible=self.second_page_visible)
             # This will be overwritten in update_disabled_buttons_and_text()
             self.update_disabled_buttons_and_text()
 
-    def get_conditions(self):
-        self.the_cat = Cat.all_cats.get(game.switches['cat'])
-
+    def display_conditions_page(self):
         # tracks the position of the detail boxes
-        x_pos = 28
-
-        # tracks the number of boxes so that we don't go out of bounds
-        count = 0
-        next_injuries = []
-        next_illnesses = []
-
-        # holds first four conditions, default display
-        self.first_page_visible = True
-        self.first_page = pygame_gui.core.UIContainer(
+        if self.condition_container: 
+            self.condition_container.kill()
+            
+        self.condition_container = pygame_gui.core.UIContainer(
             scale(pygame.Rect((178, 942), (1248, 302))),
-            MANAGER,
-            visible=self.first_page_visible)
-        container = self.first_page
+            MANAGER)
+        
+        # gather a list of all the conditions and info needed.
+        all_illness_injuries = [(i, self.get_condition_details(i)) for i in self.the_cat.permanent_condition if
+                                not (self.the_cat.permanent_condition[i]['born_with'] and self.the_cat.permanent_condition[i]["moons_until"] != -2)]
+        all_illness_injuries.extend([(i, self.get_condition_details(i)) for i in self.the_cat.injuries])
+        all_illness_injuries.extend([(i, self.get_condition_details(i)) for i in self.the_cat.illnesses if
+                                    i not in ("an infected wound", "a festering wound")])
+        all_illness_injuries = chunks(all_illness_injuries, 4)
+        
+        if not all_illness_injuries:
+            self.conditions_page = 0
+            self.right_conditions_arrow.disable()
+            self.left_conditions_arrow.disable()
+            return
+        
+        # Adjust the page number if it somehow goes out of range. 
+        if self.conditions_page < 0:
+            self.conditions_page = 0
+        elif self.conditions_page > len(all_illness_injuries) - 1:
+            self.conditions_page = len(all_illness_injuries) - 1
+            
+        # Disable the arrow buttons
+        if self.conditions_page == 0:
+            self.left_conditions_arrow.disable()
+        else:
+            self.left_conditions_arrow.enable()
+        
+        if self.conditions_page >= len(all_illness_injuries) - 1:
+            self.right_conditions_arrow.disable()
+        else:
+            self.right_conditions_arrow.enable()
 
-        # holds next four conditions, displays only once arrow button is hit
-        self.second_page_visible = False
-        self.second_page = pygame_gui.core.UIContainer(
-            scale(pygame.Rect((178, 942), (1248, 302))),
-            MANAGER,
-            visible=self.second_page_visible)
-
-        # check for permanent conditions and create their detail boxes
-        if self.the_cat.is_disabled():
-            for condition in self.the_cat.permanent_condition:
-                if self.the_cat.permanent_condition[condition]['born_with'] is True and \
-                        self.the_cat.permanent_condition[condition][
-                            "moons_until"] != -2:
-                    continue
-                # move to second page if count gets too high
-                if count < 4 and container != self.second_page:
-                    container = self.first_page
-                else:
-                    container = self.second_page
-                    x_pos = 28
-                # display the detail box
-                self.condition_box = pygame_gui.elements.UIImage(
+        x_pos = 30
+        for con in all_illness_injuries[self.conditions_page]:
+            
+            # Background Box
+            pygame_gui.elements.UIImage(
                     scale(pygame.Rect((x_pos, 25), (280, 276))),
                     self.condition_details_box, manager=MANAGER,
-                    container=container)
-                # display the detail text
-                y_adjust = 60
-                # title
-                if len(str(condition)) > 17:
-                    y_adjust += 38
-                self.condition_name_text = UITextBoxTweaked(
-                    condition,
-                    scale(pygame.Rect((x_pos, 26), (276, -1))),
+                    container=self.condition_container)
+            
+            y_adjust = 60
+            
+            name = UITextBoxTweaked(
+                    con[0],
+                    scale(pygame.Rect((x_pos, 26), (272, -1))),
                     line_spacing=.90,
                     object_id="#text_box_30_horizcenter",
-                    container=container, manager=MANAGER
-                )
-                # details
-                text = self.get_condition_details(condition)
-                self.condition_detail_text = UITextBoxTweaked(
-                    text,
-                    scale(pygame.Rect((x_pos, y_adjust), (276, 276))),
+                    container=self.condition_container, manager=MANAGER)
+            
+            y_adjust = name.get_relative_rect().height
+            details_rect = scale(pygame.Rect((x_pos, 0), (276, -1)))
+            details_rect.y = y_adjust
+            
+            UITextBoxTweaked(
+                    con[1],
+                    details_rect,
                     line_spacing=.90,
                     object_id="#text_box_22_horizcenter_pad_20_20",
-                    container=container, manager=MANAGER
-                )
-                # adjust the x_pos for the next box
-                x_pos += 304
-                count += 1
-
-        # check for injuries and display their detail boxes
-        if self.the_cat.is_injured():
-            for injury in self.the_cat.injuries:
-                # move to second page if count gets too high
-                if count < 4 and container != self.second_page:
-                    container = self.first_page
-                else:
-                    container = self.second_page
-                    x_pos = 28
-                # display the detail box
-                self.condition_box = pygame_gui.elements.UIImage(
-                    scale(pygame.Rect((x_pos, 26), (280, 276))),
-                    self.condition_details_box,
-                    container=container, manager=MANAGER
-                )
-                # display the detail text
-                y_adjust = 60
-                # title
-                if len(str(injury)) > 17:
-                    y_adjust += 38
-                self.condition_name_text = UITextBoxTweaked(
-                    injury,
-                    scale(pygame.Rect((x_pos, 26), (276, -1))),
-                    line_spacing=.90,
-                    object_id="#text_box_30_horizcenter",
-                    container=container, manager=MANAGER
-                )
-                # details
-                text = self.get_condition_details(injury)
-                self.condition_detail_text = UITextBoxTweaked(
-                    text,
-                    scale(pygame.Rect((x_pos, y_adjust), (276, 276))),
-                    line_spacing=.90,
-                    object_id="#text_box_22_horizcenter_pad_20_20",
-                    container=container, manager=MANAGER
-                )
-                # adjust the x_pos for the next box
-                x_pos += 304
-                count += 1
-
-        # check for illnesses and display their detail boxes
-        if self.the_cat.is_ill():
-            for illness in self.the_cat.illnesses:
-                # don't display infected or festering as their own condition
-                if illness in ['an infected wound', 'a festering wound']:
-                    continue
-                # move to second page if count gets too high
-                if count < 4 and container != self.second_page:
-                    container = self.first_page
-                else:
-                    container = self.second_page
-                    x_pos = 28
-                # display the detail box
-                self.condition_box = pygame_gui.elements.UIImage(
-                    scale(pygame.Rect((x_pos, 26), (280, 276))),
-                    self.condition_details_box,
-                    container=container, manager=MANAGER
-                )
-                # display the detail text
-                y_adjust = 60
-                # title
-                if len(str(illness)) > 17:
-                    y_adjust += 36
-                self.condition_name_text = UITextBoxTweaked(
-                    illness,
-                    scale(pygame.Rect((x_pos, 26), (276, -1))),
-                    line_spacing=.90,
-                    object_id="#text_box_30_horizcenter",
-                    container=container, manager=MANAGER
-                )
-                # details
-                text = self.get_condition_details(illness)
-                self.condition_detail_text = UITextBoxTweaked(
-                    text,
-                    scale(pygame.Rect((x_pos, y_adjust), (276, 276))),
-                    line_spacing=.90,
-                    object_id="#text_box_22_horizcenter_pad_20_20",
-                    container=container, manager=MANAGER
-                )
-                # adjust the x_pos for the next box
-                x_pos += 304
-                count += 1
-
-        if count > 4:
-            self.right_arrow.enable()
-
+                    container=self.condition_container, manager=MANAGER)
+            
+            
+            x_pos += 304
+        
+        return
+        
     def get_condition_details(self, name):
         """returns the relevant condition details as one string with line breaks"""
         text_list = []
@@ -1739,7 +1626,7 @@ class ProfileScreen(Screens):
                 text_list.append(f"born with this condition")
             else:
                 # moons with the condition if not born with condition
-                moons_with = self.the_cat.permanent_condition[name].get("moons_with", 1)
+                moons_with = game.clan.age - self.the_cat.permanent_condition[name]["moon_start"]
                 if moons_with != 1:
                     text_list.append(f"has had this condition for {moons_with} moons")
                 else:
@@ -1759,17 +1646,19 @@ class ProfileScreen(Screens):
         if name in self.the_cat.injuries:
             # moons with condition
             keys = self.the_cat.injuries[name].keys()
-            if 'moons_with' in keys:  # need to check if it exists for older saves
-                moons_with = self.the_cat.injuries[name]["moons_with"]
-                insert = 'has been hurt for'
-                if name == 'recovering from birth':
-                    insert = 'has been recovering for'
-                elif name == 'pregnant':
-                    insert = 'has been pregnant for'
-                if moons_with != 1:
-                    text_list.append(f"{insert} {moons_with} moons")
-                else:
-                    text_list.append(f"{insert} 1 moon")
+            moons_with = game.clan.age - self.the_cat.injuries[name]["moon_start"]
+            insert = 'has been hurt for'
+            
+            if name == 'recovering from birth':
+                insert = 'has been recovering for'
+            elif name == 'pregnant':
+                insert = 'has been pregnant for'
+            
+            if moons_with != 1:
+                text_list.append(f"{insert} {moons_with} moons")
+            else:
+                text_list.append(f"{insert} 1 moon")
+            
             # infected or festering
             if 'complication' in keys:
                 complication = self.the_cat.injuries[name]["complication"]
@@ -1777,6 +1666,7 @@ class ProfileScreen(Screens):
                     if 'a festering wound' in self.the_cat.illnesses:
                         complication = 'festering'
                     text_list.append(f'is {complication}!')
+            
             # can or can't patrol
             if self.the_cat.injuries[name]["severity"] != 'minor':
                 text_list.append("Can't work with this condition")
@@ -1784,18 +1674,20 @@ class ProfileScreen(Screens):
         # collect details for illnesses
         if name in self.the_cat.illnesses:
             # moons with condition
-            keys = self.the_cat.illnesses[name].keys()
-            if 'moons_with' in keys:  # need to check if it exists for older saves
-                moons_with = self.the_cat.illnesses[name]["moons_with"]
-                insert = "has been sick for"
-                if name == 'grief stricken':
-                    insert = 'has been grieving for'
-                if moons_with != 1:
-                    text_list.append(f"{insert} {moons_with} moons")
-                else:
-                    text_list.append(f"{insert} 1 moon")
+            moons_with = game.clan.age - self.the_cat.illnesses[name]["moon_start"]
+            insert = "has been sick for"
+            
+            if name == 'grief stricken':
+                insert = 'has been grieving for'
+            
+            if moons_with != 1:
+                text_list.append(f"{insert} {moons_with} moons")
+            else:
+                text_list.append(f"{insert} 1 moon")
+            
             if self.the_cat.illnesses[name]['infectiousness'] != 0:
                 text_list.append("infectious!")
+            
             # can or can't patrol
             if self.the_cat.illnesses[name]["severity"] != 'minor':
                 text_list.append("Can't work with this condition")
@@ -1934,15 +1826,31 @@ class ProfileScreen(Screens):
             # Button to trans or cis the cats.
             if self.cis_trans_button:
                 self.cis_trans_button.kill()
-            if self.the_cat.gender == "female" and self.the_cat.genderalign in ['male', 'female']:
-                self.cis_trans_button = UIImageButton(scale(pygame.Rect((804, 972), (344, 104))), "",
-                                                      starting_height=2, object_id="#change_trans_male_button",
-                                                      manager=MANAGER)
-            elif self.the_cat.gender == "male" and self.the_cat.genderalign in ['male', 'female']:
+            if self.the_cat.gender == "male" and self.the_cat.genderalign == "male":
                 self.cis_trans_button = UIImageButton(scale(pygame.Rect((804, 972), (344, 104))), "",
                                                       starting_height=2, object_id="#change_trans_female_button",
                                                       manager=MANAGER)
-            elif self.the_cat.genderalign != "female" and self.the_cat.genderalign != "male":
+            elif self.the_cat.gender == "female" and self.the_cat.genderalign == "female":
+                self.cis_trans_button = UIImageButton(scale(pygame.Rect((804, 972), (344, 104))), "",
+                                                      starting_height=2, object_id="#change_trans_male_button",
+                                                      manager=MANAGER)
+            elif self.the_cat.genderalign in ['trans female', 'trans male']:
+                self.cis_trans_button = UIImageButton(scale(pygame.Rect((804, 972), (344, 104))), "",
+                                                      starting_height=2, object_id="#change_nonbi_button",
+                                                      manager=MANAGER)
+            elif self.the_cat.genderalign not in ['female', 'trans female', 'male', 'trans male']:
+                self.cis_trans_button = UIImageButton(scale(pygame.Rect((804, 972), (344, 104))), "",
+                                                      starting_height=2, object_id="#change_cis_button",
+                                                      manager=MANAGER)
+            elif self.the_cat.gender == "male" and self.the_cat.genderalign == "female":
+                self.cis_trans_button = UIImageButton(scale(pygame.Rect((804, 972), (344, 104))), "",
+                                                      starting_height=2, object_id="#change_cis_button",
+                                                      manager=MANAGER)
+            elif self.the_cat.gender == "female" and self.the_cat.genderalign == "male":
+                self.cis_trans_button = UIImageButton(scale(pygame.Rect((804, 972), (344, 104))), "",
+                                                      starting_height=2, object_id="#change_cis_button",
+                                                      manager=MANAGER)
+            elif self.the_cat.genderalign:
                 self.cis_trans_button = UIImageButton(scale(pygame.Rect((804, 972), (344, 104))), "",
                                                       starting_height=2, object_id="#change_cis_button",
                                                       manager=MANAGER)
@@ -2113,11 +2021,7 @@ class ProfileScreen(Screens):
 
         # Conditions Tab
         elif self.open_tab == 'conditions':
-            self.left_arrow.disable()
-            self.right_arrow.disable()
-            self.first_page.kill()
-            self.second_page.kill()
-            self.get_conditions()
+            self.display_conditions_page()
 
     def close_current_tab(self):
         """Closes current tab. """
@@ -2166,11 +2070,10 @@ class ProfileScreen(Screens):
                 self.no_moons.kill()
 
         elif self.open_tab == 'conditions':
-            self.first_page.kill()
-            self.second_page.kill()
-            self.left_arrow.kill()
-            self.right_arrow.kill()
+            self.left_conditions_arrow.kill()
+            self.right_conditions_arrow.kill()
             self.conditions_background.kill()
+            self.condition_container.kill()
 
         self.open_tab = None
 
@@ -2453,10 +2356,9 @@ class RoleScreen(Screens):
         )
 
         name = str(self.the_cat.name)
-        if len(name) > 17:
-            name = name[:14] + "..."
-        self.selected_cat_elements["cat_name"] = pygame_gui.elements.UILabel(scale(pygame.Rect((790, 140), (320, -1))),
-                                                                             name,
+        short_name = shorten_text_to_fit(name, 300, 26)
+        self.selected_cat_elements["cat_name"] = pygame_gui.elements.UILabel(scale(pygame.Rect((775, 140), (350, -1))),
+                                                                             short_name,
                                                                              object_id=get_text_box_theme())
 
         text = f"<b>{self.the_cat.status}</b>\n{self.the_cat.personality.trait}\n"
@@ -3044,8 +2946,8 @@ class SpriteInspectScreen(Screens):
         self.set_background_visablity()
         
         # Gather list of current and previous life states
-        # "young adult", "adult", and "senior adult" all look the same: collape to adult
-        # This is not the best way to do it, so if we make them have difference apperences, this will
+        # "young adult", "adult", and "senior adult" all look the same: collapse to adult
+        # This is not the best way to do it, so if we make them have difference appearances, this will
         # need to be changed/removed. 
         if self.the_cat.age in ["young adult", "adult", "senior adult"]:
             current_life_stage = "adult"
@@ -3072,12 +2974,11 @@ class SpriteInspectScreen(Screens):
         self.make_cat_image()
         
         cat_name = str(self.the_cat.name)  # name
-        if len(cat_name) >= 40:
-            cat_name = f"{cat_name[0:39]}..."
         if self.the_cat.dead:
             cat_name += " (dead)"  # A dead cat will have the (dead) sign next to their name
+        short_name = shorten_text_to_fit(cat_name, 390, 40)
         
-        self.cat_elements["cat_name"] = pygame_gui.elements.UITextBox(cat_name,
+        self.cat_elements["cat_name"] = pygame_gui.elements.UITextBox(short_name,
                                                                           scale(pygame.Rect((50, 120), (-1, 80))),
                                                                           object_id=get_text_box_theme(
                                                                               "#text_box_40_horizcenter"), manager=MANAGER)
@@ -3085,7 +2986,7 @@ class SpriteInspectScreen(Screens):
 
         self.cat_elements["cat_name"].kill()
 
-        self.cat_elements["cat_name"] = pygame_gui.elements.UITextBox(cat_name,
+        self.cat_elements["cat_name"] = pygame_gui.elements.UITextBox(short_name,
                                                                       scale(pygame.Rect(
                                                                         (800 - name_text_size.width, 120),
                                                                         (name_text_size.width * 2, 80))),
@@ -3094,11 +2995,9 @@ class SpriteInspectScreen(Screens):
         
         # Fullscreen
         if game.settings['fullscreen']:
-            x_pos = 740 - int(name_text_size.width * 7 / 15)
+            x_pos = 745 - name_text_size.width//2
         else:
             x_pos = 740 - name_text_size.width
-        # TODO: positioning is weird. closer to names on some, further on others
-        # this only happens on fullscreen :waaaaaaa:
         self.cat_elements["favourite_button"] = UIImageButton(scale(pygame.Rect
                                                                 ((x_pos, 127), (56, 56))),
                                                               "",
@@ -3155,7 +3054,7 @@ class SpriteInspectScreen(Screens):
     def make_one_checkbox(self, location:tuple, name:str, stored_bool: bool, cat_value_to_allow=True,
                           disabled_object_id = "#unchecked_checkbox"):
         """Makes a single checkbox. So I don't have to copy and paste this 5 times. 
-            if cat_value_to_allow evalates to False, then the unchecked checkbox is always used the the checkbox 
+            if cat_value_to_allow evaluates to False, then the unchecked checkbox is always used the the checkbox 
             is disabled"""
         
         if not cat_value_to_allow:
